@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>Life Maps · teste 3D (window.__fg)</title>
+<style>
+  body{font-family:Consolas,monospace;background:#0b0e14;color:#cfe0ff;padding:16px;max-width:980px}
+  h2{color:#ffd700;margin:0 0 6px}
+  #app{position:absolute;left:-10000px;top:0;width:1200px;height:800px;border:0}
+  pre{white-space:pre-wrap;background:#0f1320;border:1px solid #24304d;padding:12px;border-radius:8px;margin-top:12px}
+  .ok{color:#3ddc84}.no{color:#ff5d73}.info{color:#7f8db3}
+</style>
+</head>
+<body>
+<h2>🧪 test-3d — harness do globo via <code>window.__fg</code></h2>
+<div class="info">Carrega <code>index.html</code> num iframe same-origin (servidor HTTP obrigatório, ex. <code>python -m http.server 8794</code>) e valida o modo 3D: boot, <code>__fg</code>, paridade cy↔3D, posições no globo/anel, sync, toggle e fallback. Servir <b>http://…/test-3d.html</b> e ler <code>#results</code>.</div>
+<iframe id="app" src="index.html"></iframe>
+<pre id="results">aguardando o app…</pre>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  var res=document.getElementById('results');
+  var done=false, pass=0, fail=0, started=Date.now();
+  function out(){ res.textContent=[].concat(parts,stamp).join('\n'); }
+  var parts=[];
+  function log(t,ok){ if(ok){pass++;}else{fail++;} parts.push((ok?'[PASS] ':'[FAIL] ')+t); out(); }
+  function ev(expr){ return app.contentWindow.eval(expr); }
+  function near(r,lo,hi){ return r>=lo && r<=hi; }
+  function ring(){ return ((new Date).getTime()-started)>30000; }
+  function poll(){
+    if(done) return;
+    if(location.search.indexOf('suite=0')>=0){ parts.push('[manual] autorun bloqueado (?suite=0) — rode window.__runSuite3D()'); stamp(); return; }
+    if(ring()){ parts.push('[TIMEOUT] 30s — app não respondeu'); stamp(); return; }
+    try{
+      var ready=ev("typeof cy!=='undefined' && !!cy.nodes && !!cy.nodes().length && !!window.__fg && !!window.__fg.graphData");
+      if(!ready){ setTimeout(poll,500); return; }
+      done=true; runSuite();
+    }catch(e){ parts.push('[erro na lib] '+e.message); stamp(); }
+  }
+  function stamp(){ res.textContent=parts.join('\n')+'\n\nRESULTADO: '+pass+' pass · '+fail+' fail'; }
+  function run(name,fn){ try{ log(name, !!fn()); }catch(e){ log(name+' → exceção: '+e.message, false); } }
+
+  function runSuite(){
+    var nc=ev("cy.nodes().length");
+    run('App boot: grafo carregado ('+nc+' nós no cy)', function(){ return nc>0; });
+
+    run('boot coerente (cy/cy3d/cymap — exatamente um visível p/ o state)', function(){
+      return true && (function(){
+        var cyV=ev("document.getElementById('cy').style.display!=='none'");
+        var c3V=ev("document.getElementById('cy3d').style.display!=='none'");
+        var mpV=ev("document.getElementById('cymap').style.display==='block'");
+        var m=ev("mode3d");
+        if(m) return c3V && !cyV;                 // 3D ativo → globo visível, 2D oculto
+        if(mpV) return !cyV && !c3V;              // Modo Mapa ativo → cymap visível
+        return cyV;                               // default → 2D visível
+      })();
+    });
+
+    run('window.__fg === fg3d (exposição p/ harness)', function(){
+      return ev("window.__fg==fg3d && !!fg3d.graphData && !!fg3d.camera && typeof fg3d.scene==='function'");
+    });
+
+    // fluxo do USUÁRIO: sair do Modo Mapa e entrar no globo 3D
+    run('sair do Modo Mapa (closeMap) e entrar no 3D (set3DMode(true))', function(){
+      ev("closeMap()");
+      ev("set3DMode(true)");
+      return ev("mode3d===true") && ev("!!window.__fg") && ev("document.getElementById('cy3d').style.display!=='none'");
+    });
+
+    var gd=ev("JSON.parse(JSON.stringify(window.__fg.graphData()))");
+    var nc2=gd.nodes.length, el=gd.links.length, ec=ev("cy.edges().length");
+    run('3D nodes == cy nodes ('+nc2+' == '+nc+')', function(){ return nc2===nc; });
+    run('3D links == cy edges ('+el+' == '+ec+')', function(){ return el===ec; });
+    var ids=gd.nodes.map(function(n){return n.id;});
+    run('ids únicos no 3D', function(){ return new Set(ids).size===ids.length; });
+
+    run('paridade título/cat/status de T O D O S os nós', function(){
+      return ev("cy.nodes().every(function(n){ var m=window.__fg.graphData().nodes.find(function(f){return f.id===n.id();}); return m && m.title===n.data('title') && m.cat===n.data('cat') && m.status===n.data('status'); })");
+    });
+
+    run('posições finitas (x/y/z)', function(){
+      return gd.nodes.every(function(n){ return isFinite(n.x)&&isFinite(n.y)&&isFinite(n.z); });
+    });
+
+    var dist=gd.nodes.map(function(n){ return Math.sqrt(n.x*n.x+n.y*n.y+n.z*n.z); });
+    var badLoc=0, badSat=0, nLoc=0, nSat=0;
+    gd.nodes.forEach(function(n,k){
+      var ll=ev("(function(){try{var c=cy.getElementById('"+n.id+"');return getLocLL(c.data('loc')||null)||null;}catch(e){return null;}})()");
+      if(ll){ nLoc++; if(!near(dist[k],55,90)) badLoc++; }
+      else { nSat++; if(!near(dist[k],80,105)) badSat++; }
+    });
+    run('nós com local no globo ('+nLoc+' · banda r 55–90)', function(){ return badLoc===0; });
+    run('nós sem local no anel orbital ('+nSat+' · banda r 80–105)', function(){ return badSat===0; });
+
+    run('sync3D() sem erro e paridade mantida', function(){
+      ev("sync3D()");
+      var g=ev("window.__fg.graphData()");
+      return g.nodes.length===ev("cy.nodes().length") && g.links.length===ev("cy.edges().length");
+    });
+
+    run('toggle 3D → 2D → 3D preserva grafo', function(){
+      ev("set3DMode(false)");
+      var ok1=ev("mode3d===false") && ev("document.getElementById('cy').style.display==='block'") && ev("document.getElementById('cy3d').style.display==='none'");
+      ev("set3DMode(true)");
+      var ok2=ev("mode3d===true") && ev("!!window.__fg") && ev("document.getElementById('cy3d').style.display!=='none'") &&
+        ev("window.__fg.graphData().nodes.length===cy.nodes().length") && ev("cy.edges().length===window.__fg.graphData().links.length");
+      return ok1 && ok2;
+    });
+
+    run('fallbackTo2D("webgl") volta p/ 2D limpo (__fg nulo) e re-sobe 3D', function(){
+      ev("fallbackTo2D('webgl')");
+      var ok1=ev("mode3d===false") && ev("document.getElementById('cy').style.display==='block'") && ev("!window.__fg");
+      ev("set3DMode(true)");
+      return ok1 && ev("!!window.__fg") && ev("mode3d===true") && ev("window.__fg.graphData().nodes.length===cy.nodes().length");
+    });
+
+    run('build3DData() com ids/titles coerentes', function(){
+      var d=ev("(function(){var b=build3DData();return {nids:b.nodes.map(function(x){return x.id;}), nlinks:b.links.length};})()");
+      return d.nids.length===nc && new Set(d.nids).size===d.nids.length && d.nlinks===ec;
+    });
+
+    parts.push('');
+    stamp();
+  }
+  setTimeout(poll, 300);
+  window.__runSuite3D = runSuite;
+})();
+</script>
+</body>
+</html>

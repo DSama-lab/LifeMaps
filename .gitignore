@@ -1,0 +1,11 @@
+index.private.html
+*.pdf
+*.backup.html
+[#] MASTER SPEC*
+FaseE-mapa-premium.png
+mental-maps-3d-faseB.png
+*.env
+.env
+.env.*
+node_modules/
+.opencode/

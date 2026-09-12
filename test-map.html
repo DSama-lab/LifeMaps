@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>Life Maps · teste Mapa Premium (#mapPins)</title>
+<style>
+  body{font-family:Consolas,monospace;background:#0b0e14;color:#cfe0ff;padding:16px;max-width:980px}
+  h2{color:#ffd700;margin:0 0 6px}
+  #app{position:absolute;left:-10000px;top:0;width:1200px;height:800px;border:0}
+  pre{white-space:pre-wrap;background:#0f1320;border:1px solid #24304d;padding:12px;border-radius:8px;margin-top:12px}
+  .ok{color:#3ddc84}.no{color:#ff5d73}.info{color:#7f8db3}
+</style>
+</head>
+<body>
+<h2>🧪 test-map — harness do Mapa Premium (#mapPins)</h2>
+<div class="info">Carrega <code>index.html</code> num iframe same-origin (servidor HTTP obrigatório, ex. <code>python -m http.server 8794</code>) e valida: pins renderizados e sem duplicação, posição == <code>project()</code>, card compacto/full + anel <code>.sel</code>, guard touch, trajetória, troca de estilo com fontes CORS-safe, busca por item e criação de item com <code>latll</code>. Servir <b>http://…/test-map.html</b> e ler <code>#results</code>.</div>
+<iframe id="app" src="index.html"></iframe>
+<pre id="results">aguardando o app…</pre>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  var res=document.getElementById('results');
+  var done=false, pass=0, fail=0, started=Date.now();
+  var parts=[];
+  function out(){ res.textContent=parts.join('\n')+'\n\nRESULTADO: '+pass+' pass · '+fail+' fail'; }
+  function log(t,ok){ if(ok){pass++;}else{fail++;} parts.push((ok?'[PASS] ':'[FAIL] ')+t); out(); }
+  function ev(expr){ return app.contentWindow.eval(expr); }
+  function run(name,fn){ try{ log(name, !!fn()); }catch(e){ log(name+' → exceção: '+e.message, false); } }
+  function ring(){ return ((new Date).getTime()-started)>45000; }
+
+  function poll(){
+    if(done) return;
+    if(location.search.indexOf('suite=0')>=0){ parts.push('[manual] autorun bloqueado (?suite=0) — rode window.__runSuiteMap()'); out(); return; }
+    if(ring()){ parts.push('[TIMEOUT] 45s — app/mapa não respondeu'); out(); return; }
+    try{
+      var ready=ev("(function(){ if(typeof cy==='undefined'||!cy.nodes||!cy.nodes().length) return false; if(document.getElementById('cymap').style.display!=='block') return false; if(typeof mapObj==='undefined'||!mapObj) return false; var p=document.querySelectorAll('#mapPins .mm-pin'); if(!p.length) return false; return Array.prototype.every.call(p,function(x){return x.style.left!=='';}); })()");
+      if(!ready){ setTimeout(poll,500); return; }
+      done=true; runSuite();
+    }catch(e){ parts.push('[erro na lib] '+e.message); }
+  }
+
+  function pollUntil(fnExpr, ms, okMsg, failMsg, next){
+    var t0=Date.now();
+    (function w(){
+      var v=false;
+      try{ v=ev(fnExpr); }catch(e){ v=false; }
+      if(v){ log(okMsg, true); next(); return; }
+      if(Date.now()-t0>(ms||9000)){ log(failMsg, false); next(); return; }
+      setTimeout(w,400);
+    })();
+  }
+
+  function runSuite(){
+    var nc=ev("cy.nodes().length");
+    run('App boot · mapa aberto ('+nc+' nós no cy)', function(){ return nc>0; });
+    run('coerência de visibilidade (Mapa → cymap visível, 2D oculto)', function(){
+      return ev("document.getElementById('cy').style.display==='none'") &&
+             ev("document.getElementById('cy3d').style.display==='none'") &&
+             ev("document.getElementById('cymap').style.display==='block'") &&
+             ev("mode3d===false");
+    });
+
+    var pinCount=ev("document.querySelectorAll('#mapPins .mm-pin').length");
+    run('pins renderizados ('+pinCount+') e todos posicionados', function(){
+      return pinCount>0 &&
+        ev("Array.prototype.every.call(document.querySelectorAll('#mapPins .mm-pin'),function(p){return p.style.left!==''&&p.style.top!=='';})");
+    });
+    run('mapPinEls coerente com o DOM ('+pinCount+' keys == pins)', function(){
+      return ev("Object.keys(mapPinEls||{}).length===document.querySelectorAll('#mapPins .mm-pin').length");
+    });
+
+    run('3× syncMap sem duplicação (pins reutilizados por data-id)', function(){
+      var refBefore=ev("document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']')");
+      var before=ev("document.querySelectorAll('#mapPins .mm-pin').length");
+      ev("syncMap();syncMap();syncMap();");
+      var after=ev("document.querySelectorAll('#mapPins .mm-pin').length");
+      var refAfter=ev("document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']')");
+      return before>0 && before===after && after===pinCount && refBefore===refAfter;
+    });
+
+    run('posição do pin canada == mapObj.project(ll)', function(){
+      return ev("(function(){ var n=cy.getElementById('canada'); var ll=nodeLL(n); var pt=mapObj.project([ll[1],ll[0]]); var p=document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']'); return p && Math.abs(parseFloat(p.style.left)-pt.x)<0.6 && Math.abs(parseFloat(p.style.top)-pt.y)<0.6; })()");
+    });
+
+    run('anel .sel aplica no open e limpa no hide', function(){
+      ev("openMapCard(cy.getElementById('canada'),false)");
+      var on=ev("document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']').classList.contains('sel')");
+      ev("hideMapCard()");
+      var off=!ev("document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']').classList.contains('sel')");
+      return on && off;
+    });
+
+    run('card compacto → full (mapCardState + popup real)', function(){
+      ev("openMapCard(cy.getElementById('canada'),false)");
+      var c1=ev("!!(mapCardState&&mapCardState.nodeId==='canada'&&!mapCardState.full)");
+      ev("openMapCard(cy.getElementById('canada'),true)");
+      var c2=ev("!!(mapCardState&&mapCardState.full&&mapCardState.pop)");
+      var popIn=ev("(function(){ try{ return !!mapCardState.pop.getElement(); }catch(e){ return false; } })()");
+      ev("hideMapCard()");
+      var c3=ev("!mapCardState");
+      return c1 && c2 && popIn && c3;
+    });
+
+    parts.push('');
+    // troca de estilo (assíncrona) e depois o resto
+    ev("setMapStyle('escuro')");
+    pollUntil("(function(){ try{ return mapObj.getStyle().glyphs.indexOf('fonts.openmaptiles.org')>=0; }catch(e){ return false; } })()",
+      10000,
+      'setMapStyle("escuro") → glyphs fonts.openmaptiles.org (CORS aberto)',
+      'glyphs do escuro não aplicados após 10s',
+      function(){
+        pollUntil("(function(){ try{ return !!mapObj.getLayer('traj-line'); }catch(e){ return false; } })()",
+          45000,
+          'traj-line presente após troca de estilo (convergência)',
+          'traj-line não recriado após 45s',
+          afterStyle);
+      });
+  }
+
+  function afterStyle(){
+    run('após troca de estilo: 9 pins, posicionados, sem duplicata', function(){
+      var n=ev("document.querySelectorAll('#mapPins .mm-pin').length");
+      return n===9 &&
+        ev("Object.keys(mapPinEls||{}).length===document.querySelectorAll('#mapPins .mm-pin').length") &&
+        ev("Array.prototype.every.call(document.querySelectorAll('#mapPins .mm-pin'),function(p){return p.style.left!==''&&p.style.top!=='';})");
+    });
+
+    run('guard touch (hover:none) bloqueia pointerenter', function(){
+      ev("window.__origMM=window.matchMedia; window.matchMedia=function(q){ if(String(q)==='(hover: none)') return {matches:true,media:q,onchange:null,addListener:function(){},removeListener:function(){},addEventListener:function(){},removeEventListener:function(){}}; return window.__origMM(q); };");
+      ev("hideMapCard()");
+      var dispatched=ev("(function(){ var p=document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']'); p.dispatchEvent(new MouseEvent('pointerenter',{bubbles:true})); return true; })()");
+      var noOpen=ev("!mapCardState");
+      ev("window.matchMedia=window.__origMM; delete window.__origMM;");
+      return dispatched && noOpen;
+    });
+
+    run('desktop: pointerenter abre card compacto', function(){
+      ev("hideMapCard()");
+      ev("(function(){ var p=document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']'); p.dispatchEvent(new MouseEvent('pointerenter',{bubbles:true})); })()");
+      var ok=ev("!!mapCardState&&!mapCardState.full&&mapCardState.nodeId==='canada'");
+      ev("hideMapCard()");
+      return ok;
+    });
+
+    run('busca local: mapSearchRun("canada") lista resultados', function(){
+      var r=ev("(function(){ var res=document.createElement('div'); mapSearchRun('canada',res); return {shown:res.style.display==='block', hits:res.querySelectorAll('a.sr').length}; })()");
+      return r.shown && r.hits>0;
+    });
+
+    var created=ev(`(function(){
+      var ov=document.getElementById('mapItemOverlay');
+      ov.innerHTML='<input id="mioName"><select id="mioCat"><option>info</option></select><select id="mioPtype"><option>lugar</option></select>';
+      ov.style.display='block';
+      document.getElementById('mioName').value='Teste Harness Mapa';
+      createMapItemAt(-10,-60);
+      var node=cy.nodes().filter(function(n){return n.data('title')==='Teste Harness Mapa';});
+      if(!node.length) return {ok:false};
+      var id=node[0].id();
+      var ll=node[0].data('latll');
+      var pin=document.querySelector('#mapPins .mm-pin[data-id="'+id+'"]');
+      return {ok:!!(ll&&ll.length===2&&Math.abs(ll[0]-(-10))<0.001&&Math.abs(ll[1]-(-60))<0.001), hasPin:!!pin, id:id};
+    })()`);
+    run('criação de item persiste latll e ganha pin no mapa', function(){
+      return !!(created && created.ok && created.hasPin);
+    });
+
+    ev("(function(){ var node=cy.nodes().filter(function(n){return n.data('title')==='Teste Harness Mapa';}); if(node.length) cy.remove(node[0]); })()");
+    ev("syncMap()");
+    run('limpeza remove o nó de teste e volta a 9 pins', function(){
+      return ev("(function(){ return {gone:!cy.nodes().some(function(n){return n.data('title')==='Teste Harness Mapa';}), pins:document.querySelectorAll('#mapPins .mm-pin').length, keys:Object.keys(mapPinEls||{}).length}; })()").gone &&
+             ev("(function(){ return {pins:document.querySelectorAll('#mapPins .mm-pin').length, keys:Object.keys(mapPinEls||{}).length}; })()").pins===9 &&
+             ev("!(function(){ var node=cy.nodes().filter(function(n){return n.data('title')==='Teste Harness Mapa';}); return node.length; })()");
+    });
+
+    parts.push('');
+    out();
+  }
+
+  window.__runSuiteMap = runSuite;
+  setTimeout(poll, 200);
+})();
+</script>
+</body>
+</html>
