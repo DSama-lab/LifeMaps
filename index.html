@@ -163,6 +163,9 @@
   #mapGear .mg-t{font-size:10px;letter-spacing:.6px;font-weight:800;color:var(--muted);margin:2px 0 4px;text-transform:uppercase}
   #mapGear label{display:flex;align-items:center;gap:8px;font-size:12px;padding:5px 0;cursor:pointer;color:var(--text)}
   #mapGear input[type=checkbox]{accent-color:var(--accent,#4c9cff);width:15px;height:15px;cursor:pointer}
+  #mapGear .mg-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;padding:5px 0;color:var(--text)}
+  #mapGear select{background:var(--glass2);border:1px solid var(--line);border-radius:7px;padding:3px 6px;font-size:11.5px;color:var(--text);font-family:inherit;cursor:pointer;max-width:190px}
+  #mapGear select:focus{outline:none;border-color:var(--accent)}
   #mapSearchWrap{position:absolute;top:150px;left:14px;z-index:8;width:min(330px,72vw)}
   #mapSearchWrap .ms-in{width:100%;display:flex;gap:6px}
   #mapSearchWrap input{flex:1;min-width:0;background:var(--glass2);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:12.5px;color:var(--text);font-family:inherit;backdrop-filter:blur(8px)}
@@ -347,6 +350,14 @@
     main{min-height:52vh !important}
     #dvL,#dvR{display:none}body{overflow:auto}#cy{min-height:46vh}#cymap{min-height:42vh}
     #mapDetails{width:calc(100% - 28px);max-height:34vh;left:14px;right:auto;bottom:14px}
+  @media (max-width:980px) and (orientation:landscape){#app{grid-template-columns:minmax(210px,250px) 1fr;grid-template-rows:56px 1fr;grid-template-areas:"h h" "l m";overflow:hidden}
+    #app>header{grid-area:h}
+    #app>aside#left{grid-area:l;border-right:1px solid var(--line);overflow-y:auto}
+    #app>main{grid-area:m;min-height:0 !important}
+    #app>aside#right,.split{display:none!important}
+    body{overflow:hidden}
+    #cy,#cymap{min-height:0 !important;height:100%}
+  }
 </style>
 </head>
 <body>
@@ -408,6 +419,12 @@
       <div id="mapGear" style="display:none">
         <div class="mg-t">Gestos</div>
         <label title="Dois dedos no touchpad arrastam o mapa em qualquer direção; a pinça (ctrl+scroll) dá zoom"><input type="checkbox" id="mapGest2F" onchange="setGest2F(this.checked)"> 2 dedos = arrastar mapa</label>
+        <div class="mg-row"><span title="Como o arrasto do touchpad se comporta quando &apos;2 dedos&apos; está ligado">Arrasto</span>
+          <select id="mapPanMode" onchange="setGestMode(this.value)" title="Modo de arrasto do touchpad (2 dedos ligado)">
+            <option value="diag">Sempre diagonal (atual)</option>
+            <option value="diagonly">Só diagonais (ignora V/H)</option>
+            <option value="native">Direto (nativo)</option>
+          </select></div>
         <div class="mg-t" style="margin-top:8px">Aparência</div>
         <label title="Colorir cada país (look mapa-múndi). Os países continuam clicáveis mesmo desligado"><input type="checkbox" id="mapCountryFills" onchange="setCountryFills(this.checked)"> Cores dos países</label>
       </div>
@@ -1725,7 +1742,7 @@ function resize3D(){
   fg3d.width(w).height(h);
   try{ fg3d.zoomToFit(600,110); }catch(e){}
 }
-window.addEventListener('resize',()=>{ if(mode3d) resize3D(); });
+window.addEventListener('resize',()=>{ if(mode3d) resize3D(); try{ if(mapObj && document.getElementById('cymap').style.display==='block'){ mapObj.resize(); setTimeout(mmPositionPins,70); } }catch(e){} });
 
 /* =========================================================
    MODO MAPA — MapLibre GL (mapa político + seleção de região)
@@ -1814,6 +1831,7 @@ function initMap(){
     mapObj.addControl(new maplibregl.NavigationControl(),'bottom-right');
     mapGest2F=mapPref('mv_gest_2f',true);
     countryFills=mapPref('mv_country_fills',false);
+    mapPanMode=mapModePref('mv_pan_mode','diag');
     const cymapEl=document.getElementById('cymap');
     cymapEl.addEventListener('wheel',mmTrackpadPan,{capture:true,passive:false});
     mapObj.on('load',()=>{
@@ -1826,6 +1844,7 @@ function initMap(){
     });
     mapObj.on('move',mmPositionPins);
     mapObj.on('moveend',mmPositionPins);
+    mapObj.on('resize',()=>{ setTimeout(mmPositionPins,50); });
     mapObj.on('click',(e)=>{
       if(mapPickMode){ setMapPick(false,true); openMapItemForm(e.lngLat.lat, e.lngLat.lng); return; }
       hideMapCard();
@@ -1854,9 +1873,11 @@ const COUNTRY_COLORS_LOCK_KEY='mm_country_colors_lock';
 let countryColorOverrides=null;
 let countryDataCache=null;
 const MM_PHOTO_ZOOM=2.2;
-let mapGest2F=true, countryFills=true;
+let mapGest2F=true, countryFills=true, mapPanMode='diag';
 function mapPref(key,def){ try{ const v=localStorage.getItem(key); return v===null?def:v==='1'; }catch(e){ return def; } }
 function setMapPref(key,on){ try{ localStorage.setItem(key,on?'1':'0'); }catch(e){} }
+function mapModePref(key,def){ try{ const v=localStorage.getItem(key); return v===null?def:v; }catch(e){ return def; } }
+function setMapModePref(key,m){ try{ localStorage.setItem(key,m); }catch(e){} }
 function countryFillsOn(){ return countryFills||mapMapStyle==='politico'; }
 function toggleMapGear(){
   const g=document.getElementById('mapGear'); if(!g) return;
@@ -1865,12 +1886,26 @@ function toggleMapGear(){
   if(showy){
     const c2=document.getElementById('mapGest2F'); if(c2) c2.checked=mapGest2F;
     const c3=document.getElementById('mapCountryFills'); if(c3) c3.checked=countryFillsOn();
+    const m4=document.getElementById('mapPanMode'); if(m4) m4.value=mapPanMode;
   } else { closeMapGear(); }
 }
 function closeMapGear(){ const g=document.getElementById('mapGear'); if(g) g.style.display='none'; }
 function setGest2F(on){
   mapGest2F=!!on; setMapPref('mv_gest_2f',mapGest2F);
   toast(mapGest2F?'Touchpad: 2 dedos arrastam o mapa (pinça = zoom) ✓':'Touchpad: comportamento padrão (scroll = zoom) ✓','ok');
+}
+function setGestMode(mode){
+  if(['diag','diagonly','native'].indexOf(mode)<0) mode='diag';
+  mapPanMode=mode; setMapModePref('mv_pan_mode',mapPanMode);
+  const msgs={diag:'Sempre diagonal (atual) ✓',diagonly:'Só diagonais — V/H ignorados ✓',native:'Direto (nativo) ✓'};
+  toast('Arrasto touchpad: '+msgs[mode],'ok');
+}
+function mmAxisKind(dx,dy){
+  const ax=Math.abs(dx), ay=Math.abs(dy), mag=Math.max(ax,ay);
+  if(mag<=0) return 0;                            // nulo
+  if(ax>ay*3) return 1;                           // horizontal dominante
+  if(ay>ax*3) return 2;                           // vertical dominante
+  return 3;                                       // ambos (diagonal)
 }
 function setCountryFills(on){
   setMapPref('mv_country_fills',!!on); applyCountryFillOpacity();
@@ -1901,8 +1936,17 @@ function mmTrackpadPan(e){
   if(!mapGest2F) return;               // recurso desligado → comportamento nativo
   if(e.ctrlKey) return;                // pinça do trackpad (ctrl+wheel) → zoom nativo
   e.preventDefault(); e.stopPropagation();
-  const d=mmDiagDelta(e.deltaX, e.deltaY);
-  try{ mapObj.panBy([d[0], d[1]], {duration:0}); }catch(err){}
+  let d;
+  if(mapPanMode==='diagonly'){
+    const k=mmAxisKind(e.deltaX, e.deltaY);
+    if(k===0||k===1||k===2) return;    // nulo/vertical/horizontal puro → ignora
+    d=[e.deltaX, e.deltaY];
+  } else if(mapPanMode==='native'){
+    d=[e.deltaX, e.deltaY];
+  } else {
+    d=mmDiagDelta(e.deltaX, e.deltaY);
+  }
+  try{ mapObj.panBy(d, {duration:0}); }catch(err){}
 }
 function loadCountryOverrides(){
   if(countryColorOverrides!==null) return;
@@ -2625,7 +2669,7 @@ function applyLayout(){
 function afterPanelResize(){
   try{ cy.resize(); }catch(e){}
   try{ resize3D(); }catch(e){}
-  try{ if(mapObj && document.getElementById('cymap').style.display==='block') mapObj.resize(); }catch(e){}
+  try{ if(mapObj && document.getElementById('cymap').style.display==='block'){ mapObj.resize(); setTimeout(mmPositionPins,60); } }catch(e){}
 }
 function refreshGripGlyphs(){
   const gL=document.getElementById('dvLGrip'), gR=document.getElementById('dvRGrip');

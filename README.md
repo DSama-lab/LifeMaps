@@ -12,6 +12,8 @@ The application is distributed as a single-file HTML document. There is no build
 - **2D graph (Cytoscape.js).** Nodes represent phases, plans, and rules; edges represent prerequisites or conditions.
 - **3D globe.** Nodes with a geographic location (`loc`) are positioned on a textured globe by latitude/longitude. Nodes without a location stay on an orbital ring.
 - **Premium map (MapLibre GL).** A custom pin layer (`#mapPins`) that cannot duplicate, a phase trajectory layer, a political/region layer, local search plus OpenStreetMap geocoding, item cards, and five base styles (standard, dark, streets, political, satellite) with CORS-safe fonts.
+- **Adaptive layout.** Portrait phones collapse the app into a single column; landscape phones switch to a two-pane layout (side panel + full-height map). Pins stay clickable on both (they sit above the canvas).
+- **Configurable trackpad panning.** In the map gear menu you can choose how two-finger drag behaves: always diagonal (axis-lock workaround), diagonals only (pure vertical/horizontal gestures are ignored), or native (as sent by the browser). The choice is stored in the browser.
 - **Per-node sub-plan.** Drill-down into a subtree with a breadcrumb trail.
 - **Per-node budget.** Cost per step, prerequisite cascade, and a financial summary with live currency conversion (no key required).
 - **Structured extraction.** Curated ingestion of video transcripts into typed items (requirements, contacts, job opportunities).
@@ -34,7 +36,7 @@ The application opens in Map mode when the graph contains geolocated nodes. The 
 |---|---|---|
 | Conditional engine | `node test-motor.js` | 13/13 |
 | 3D / globe | `http://127.0.0.1:8794/test-3d.html` | 15/15 |
-| Premium map | `http://127.0.0.1:8794/test-map.html` | 16/16 |
+| Premium map | `http://127.0.0.1:8794/test-map.html` | 17/17 |
 
 Note for `test-map.html`: cache-bust the application iframe before running (`f.src='index.html?cv='+Date.now()`), otherwise the HTTP cache may serve a stale copy of `index.html`.
 
