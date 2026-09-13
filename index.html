@@ -132,7 +132,6 @@
   #cy3d canvas{cursor:grab}
   #cy3d canvas:active{cursor:grabbing}
   #cymap{position:absolute;inset:0;display:none;z-index:2}
-  #cymap canvas{filter:saturate(1.05) brightness(1.03) contrast(1)}
   #cymap .maplibregl-canvas{cursor:grab}
   #cymap .maplibregl-canvas:active{cursor:grabbing}
   #mapBar{position:absolute;top:14px;right:14px;z-index:7;display:flex;align-items:center;gap:8px;
@@ -145,11 +144,25 @@
   .mm-pin:hover{transform:scale(1.22) translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.25)}
   .mm-pin.sel{box-shadow:0 0 0 4px var(--accent), 0 8px 20px rgba(0,0,0,.4);transform:scale(1.1)}
   .mm-pin.sel::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1.5px solid var(--accent);opacity:.7}
+  .mm-photo{width:96px;height:64px;border-radius:13px;overflow:hidden;border-width:2px}
+  .mm-photo .mm-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .mm-photo .mm-ico{position:absolute;top:4px;left:5px;width:19px;height:19px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:10.5px;line-height:1;backdrop-filter:blur(2px)}
+  .mm-photo .mm-lbl{position:absolute;left:0;right:0;bottom:0;padding:12px 6px 5px;background:linear-gradient(transparent,rgba(0,0,0,.78));color:#fff;font-size:9.5px;font-weight:700;line-height:1.2;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mm-photo:hover{transform:scale(1.07) translateY(-2px)}
+  .mm-photo.sel{box-shadow:0 0 0 4px var(--accent), 0 6px 18px rgba(0,0,0,.45)}
+  .mm-photo.sel::after{display:none}
   #mapPins{position:absolute;inset:0;z-index:1;pointer-events:none}
   #cymap .maplibregl-canvas-container{position:relative;z-index:2}
   #mapPins .mm-pin{position:absolute;left:0;top:0;pointer-events:auto;transform:translate(-50%,-50%)}
+  #mapPins .mm-pin.mm-photo{transform:translate(-50%,-100%)}
   #mapPins .mm-pin:hover{transform:translate(-50%,-50%) scale(1.22)}
   #mapPins .mm-pin.sel{transform:translate(-50%,-50%) scale(1.1)}
+  #mapPins .mm-pin.mm-photo:hover{transform:translate(-50%,-100%) scale(1.06)}
+  #mapPins .mm-pin.mm-photo.sel{transform:translate(-50%,-100%) scale(1.04);z-index:2}
+  #mapGear{position:absolute;top:calc(100% + 6px);right:0;min-width:238px;background:var(--bg2,#1a1e29);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:20}
+  #mapGear .mg-t{font-size:10px;letter-spacing:.6px;font-weight:800;color:var(--muted);margin:2px 0 4px;text-transform:uppercase}
+  #mapGear label{display:flex;align-items:center;gap:8px;font-size:12px;padding:5px 0;cursor:pointer;color:var(--text)}
+  #mapGear input[type=checkbox]{accent-color:var(--accent,#4c9cff);width:15px;height:15px;cursor:pointer}
   #mapSearchWrap{position:absolute;top:150px;left:14px;z-index:8;width:min(330px,72vw)}
   #mapSearchWrap .ms-in{width:100%;display:flex;gap:6px}
   #mapSearchWrap input{flex:1;min-width:0;background:var(--glass2);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:12.5px;color:var(--text);font-family:inherit;backdrop-filter:blur(8px)}
@@ -387,6 +400,13 @@
       <button class="btn sm" id="mapColorLockBtn" onclick="toggleColorLock()" title="Bloquear/desbloquear a troca de cor dos países (oculta o seletor para o usuário final)" data-i18n="map.lock">🔒 Cores</button>
       <span id="mapSelInfo" class="map-sel"></span>
       <button class="btn sm" id="mapDetBtn" onclick="toggleMapDetails()" style="display:none" data-i18n="map.details">📍 Detalhes</button>
+      <button class="btn sm" id="mapGearBtn" onclick="toggleMapGear()" title="Configurações do mapa">⚙️</button>
+      <div id="mapGear" style="display:none">
+        <div class="mg-t">Gestos</div>
+        <label title="Dois dedos no touchpad arrastam o mapa em qualquer direção; a pinça (ctrl+scroll) dá zoom"><input type="checkbox" id="mapGest2F" onchange="setGest2F(this.checked)"> 2 dedos = arrastar mapa</label>
+        <div class="mg-t" style="margin-top:8px">Aparência</div>
+        <label title="Colorir cada país (look mapa-múndi). Os países continuam clicáveis mesmo desligado"><input type="checkbox" id="mapCountryFills" onchange="setCountryFills(this.checked)"> Cores dos países</label>
+      </div>
       </div>
     </div>
     <div id="mapSearchWrap" style="display:none">
@@ -1788,10 +1808,15 @@ function initMap(){
       keyboard:true, doubleClickZoom:false, touchZoomRotate:true, cooperativeGestures:false
     });
     mapObj.addControl(new maplibregl.NavigationControl(),'bottom-right');
+    mapGest2F=mapPref('mv_gest_2f',true);
+    countryFills=mapPref('mv_country_fills',false);
+    const cymapEl=document.getElementById('cymap');
+    cymapEl.addEventListener('wheel',mmTrackpadPan,{capture:true,passive:false});
     mapObj.on('load',()=>{
       mmPinsInit();
       loadPoliticalLayer();
       syncMap();
+      mmApplyPinMode();
       // a trajetória precisa do estilo totalmente pronto (loaded()); refaz um pouco depois
       setTimeout(()=>{ try{ if(mapObj&&mapObj.loaded()) drawTrajectory(); }catch(e){} }, 800);
     });
@@ -1809,9 +1834,13 @@ function initMap(){
     mapObj.on('move',()=>{ closeRadialMenu(); });
     // força a reaplicação quando o style terminar
     mapObj.on('idle',()=>{ mmPositionPins(); try{ drawTrajectory(); }catch(e){} ifMapOpen(()=>{ if(mapSelFeature) highlightRegion(); }); });
+    mapObj.on('zoomend',()=>mmApplyPinMode());
     document.addEventListener('keydown',mmKey);
     document.getElementById('mapSearch').addEventListener('input',mapSearchInput);
-    document.addEventListener('click',(e)=>{ const s=document.getElementById('mapSearchRes'); if(s && !e.target.closest('#mapSearchWrap')) s.style.display='none'; });
+    document.addEventListener('click',(e)=>{
+      const s=document.getElementById('mapSearchRes'); if(s && !e.target.closest('#mapSearchWrap')) s.style.display='none';
+      const g=document.getElementById('mapGear'); if(g && g.style.display!=='none' && !e.target.closest('#mapGear, #mapGearBtn')) g.style.display='none';
+    });
   }catch(err){ console.warn('[mm] maplibre init', err); toast('Não foi possível abrir o mapa','err'); }
   return mapObj;
 }
@@ -1820,6 +1849,57 @@ const COUNTRY_COLORS_KEY='mm_country_colors';
 const COUNTRY_COLORS_LOCK_KEY='mm_country_colors_lock';
 let countryColorOverrides=null;
 let countryDataCache=null;
+const MM_PHOTO_ZOOM=2.2;
+let mapGest2F=true, countryFills=true;
+function mapPref(key,def){ try{ const v=localStorage.getItem(key); return v===null?def:v==='1'; }catch(e){ return def; } }
+function setMapPref(key,on){ try{ localStorage.setItem(key,on?'1':'0'); }catch(e){} }
+function countryFillsOn(){ return countryFills||mapMapStyle==='politico'; }
+function toggleMapGear(){
+  const g=document.getElementById('mapGear'); if(!g) return;
+  const showy=g.style.display==='none';
+  g.style.display=showy?'block':'none';
+  if(showy){
+    const c2=document.getElementById('mapGest2F'); if(c2) c2.checked=mapGest2F;
+    const c3=document.getElementById('mapCountryFills'); if(c3) c3.checked=countryFillsOn();
+  } else { closeMapGear(); }
+}
+function closeMapGear(){ const g=document.getElementById('mapGear'); if(g) g.style.display='none'; }
+function setGest2F(on){
+  mapGest2F=!!on; setMapPref('mv_gest_2f',mapGest2F);
+  toast(mapGest2F?'Touchpad: 2 dedos arrastam o mapa (pinça = zoom) ✓':'Touchpad: comportamento padrão (scroll = zoom) ✓','ok');
+}
+function setCountryFills(on){
+  setMapPref('mv_country_fills',!!on); applyCountryFillOpacity();
+  toast((countryFillsOn())?'Cores dos países ligadas ✓':'Cores dos países desligadas (países continuam clicáveis) ✓','ok');
+}
+function applyCountryFillOpacity(){
+  if(!mapObj) return;
+  const on=countryFillsOn();
+  const base=mapMapStyle==='satelite'?0.42:(mapMapStyle==='politico'?0.92:0.55);
+  const op=on?base:0;
+  try{
+    mapObj.setPaintProperty('countries-fill','fill-opacity',op);
+    mapObj.setPaintProperty('countries-fill-multi','fill-opacity',op);
+  }catch(e){}
+}
+function mmDiagDelta(dx,dy){
+  const ax=Math.abs(dx), ay=Math.abs(dy), mag=Math.max(ax,ay);
+  if(mag>0 && ax>ay*3){
+    const s=dx>0?1:-1; return [s*mag*0.7071, -s*mag*0.7071];   // right→NE, left→SW
+  }
+  if(mag>0 && ay>ax*3){
+    const s=dy>0?1:-1; return [s*mag*0.7071, s*mag*0.7071];    // down→SE, up→NW
+  }
+  return [dx,dy];
+}
+function mmTrackpadPan(e){
+  if(!mapObj) return;
+  if(!mapGest2F) return;               // recurso desligado → comportamento nativo
+  if(e.ctrlKey) return;                // pinça do trackpad (ctrl+wheel) → zoom nativo
+  e.preventDefault(); e.stopPropagation();
+  const d=mmDiagDelta(e.deltaX, e.deltaY);
+  try{ mapObj.panBy([d[0], d[1]], {duration:0}); }catch(err){}
+}
 function loadCountryOverrides(){
   if(countryColorOverrides!==null) return;
   try{ countryColorOverrides=JSON.parse(localStorage.getItem(COUNTRY_COLORS_KEY)||'{}'); }
@@ -1888,7 +1968,8 @@ function loadPoliticalLayer(){
       const beforeId=(mapObj.getStyle()&&mapObj.getStyle().layers&&mapObj.getStyle().layers[0])?mapObj.getStyle().layers[0].id:undefined;
       mapObj.addLayer({id:'ocean-bg',type:'background',paint:{'background-color':ocean}}, beforeId);
     }
-    // no estilo político os países cobrem o mapa; nos demais (vias/real/satélite) deixam o mapa real aparecer
+    // no estilo político os países cobrem o mapa; nos demais (vias/real/satélite) deixam o mapa real aparecer.
+    // A opacidade real é controlada por applyCountryFillOpacity() (toggle "Cores dos países"); aqui só cria as camadas.
     const soft = mapMapStyle!=='politico';
     const fill={
       'fill-color':['get','cc'],
@@ -1901,16 +1982,22 @@ function loadPoliticalLayer(){
     if(!mapObj.getLayer('countries-fill-multi')){
       mapObj.addLayer({id:'countries-fill-multi',type:'fill',source:'countries',paint:fill,filter:['==',['geometry-type'],'MultiPolygon']});
     }
+    applyCountryFillOpacity();
     if(!countryDataCache){
-      fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-        .then(r=>r.json())
-        .then(gj=>{
-          if(!gj||!gj.features) return;
-          gj.features.forEach(f=>{ if(f.properties){ f.properties.cc=countryColor(f.properties.name||f.properties.NAME); if(!f.properties.name)f.properties.name=f.properties.NAME; } });
-          countryDataCache=gj;
-          if(mapObj.getSource('countries')) mapObj.getSource('countries').setData(gj);
-        })
-        .catch(err=>console.warn('[mm] countries fetch',err));
+      const URL='https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json';
+      const deco=(gj)=>{
+        if(!gj||!gj.features) return;
+        gj.features.forEach(f=>{ if(f.properties){ f.properties.cc=countryColor(f.properties.name||f.properties.NAME); if(!f.properties.name)f.properties.name=f.properties.NAME; } });
+        countryDataCache=gj;
+        if(mapObj.getSource('countries')) mapObj.getSource('countries').setData(gj);
+      };
+      const download=()=>fetch(URL).then(r=>r.json()).then(deco).catch(err=>console.warn('[mm] countries fetch',err));
+      if('caches' in window){
+        caches.open('lm-world').then(cache=>cache.match(URL)).then(hit=>{
+          if(hit){ return hit.json().then(deco); }
+          return download().then(()=>{ if(countryDataCache){ caches.open('lm-world').then(c=>c.put(URL,new Response(JSON.stringify(countryDataCache),{headers:{'Content-Type':'application/json'}}))).catch(()=>{}); } });
+        }).catch(download);
+      } else { download(); }
     }
   }catch(err){ console.warn('[mm] political layer', err); }
 }
@@ -1935,8 +2022,12 @@ function setMapSel(e){
 function highlightRegion(){
   if(!mapObj) return;
   try{
-    if(mapObj.getLayer('selreg-fill')) mapObj.removeLayer('selreg-fill');
-    if(mapObj.getSource('selreg')) mapObj.removeSource('selreg');
+    if(!mapSelFeature||!mapSelFeature.geometry){ clearRegionHighlight(); return; }
+    if(mapObj.getLayer('selreg-fill') && mapObj.getSource('selreg')){
+      // reusa camada/source (sem remove+add) → sem jank a cada idle
+      mapObj.getSource('selreg').setData({type:'Feature',geometry:mapSelFeature.geometry,properties:{}});
+      return;
+    }
     mapObj.addSource('selreg',{type:'geojson',data:{type:'Feature',geometry:mapSelFeature.geometry,properties:{}}});
     mapObj.addLayer({id:'selreg-fill',type:'fill',source:'selreg',
       paint:{'fill-color':'rgba(190,235,210,0.55)','fill-outline-color':'#8fd9a8'}});
@@ -2179,6 +2270,31 @@ function mmPositionPins(){
     p.e.style.top=pt.y.toFixed(1)+'px';
   }
 }
+function shortT(n){
+  const t=(n&&n.data&&(n.data('title')||n.id()))||'';
+  return String(t).slice(0,20);
+}
+function mmPinInner(p){
+  if(!p||!p.e||!mapPinsLayer) return;
+  let n=null;
+  try{ const c=cy.getElementById(p.id); if(c&&c.length) n=c.node(0); }catch(e){}
+  if(!n) return;
+  const z=mapObj?mapObj.getZoom():2;
+  const img=n.data('img');
+  if(img && z>=MM_PHOTO_ZOOM){
+    p.e.classList.add('mm-photo');
+    p.e.innerHTML='<img class="mm-thumb" src="'+esc(img)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"><span class="mm-ico">'+(nodeTypeIcon(n))+'</span><span class="mm-lbl">'+esc(shortT(n))+'</span>';
+  } else {
+    p.e.classList.remove('mm-photo');
+    p.e.textContent=nodeTypeIcon(n);
+    p.e.title=(n.data('title')||p.id);
+  }
+}
+function mmApplyPinMode(){
+  if(!mapObj||!mapPinsLayer) return;
+  for(const id in mapPinEls){ try{ mmPinInner(mapPinEls[id]); }catch(e){} }
+  mmPositionPins();
+}
 function syncMap(){
   if(!mapObj) return;
   mmPinsInit();
@@ -2208,15 +2324,14 @@ function syncMap(){
         openCard(true);
       });
       mapPinsLayer.appendChild(el);
-      p={e:el,ll:ll};
+      p={e:el,ll:ll,id:n.id()};
       mapPinEls[n.id()]=p;
     }
     p.ll=ll;
     const cat=n.data('cat'); const cs=CAT_STYLE[cat]||{border:'#4b5468',bg:'#161b26'};
     p.e.style.setProperty('--pin-bg',cs.border||'#4b5468');
     p.e.style.setProperty('--pin-ring',markerColor(n));
-    p.e.textContent=nodeTypeIcon(n);
-    p.e.title=(n.data('title')||n.id());
+    mmPinInner(p);
     p.e.classList.toggle('sel',cur===n.id());
   });
   for(const id in mapPinEls){

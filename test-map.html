@@ -20,7 +20,7 @@
 (function(){
   var app=document.getElementById('app');
   var res=document.getElementById('results');
-  var done=false, pass=0, fail=0, started=Date.now();
+  var done=false, pass=0, fail=0, started=Date.now(), pinCount=0;
   var parts=[];
   function out(){ res.textContent=parts.join('\n')+'\n\nRESULTADO: '+pass+' pass · '+fail+' fail'; }
   function log(t,ok){ if(ok){pass++;}else{fail++;} parts.push((ok?'[PASS] ':'[FAIL] ')+t); out(); }
@@ -60,7 +60,7 @@
              ev("mode3d===false");
     });
 
-    var pinCount=ev("document.querySelectorAll('#mapPins .mm-pin').length");
+    pinCount=ev("document.querySelectorAll('#mapPins .mm-pin').length");
     run('pins renderizados ('+pinCount+') e todos posicionados', function(){
       return pinCount>0 &&
         ev("Array.prototype.every.call(document.querySelectorAll('#mapPins .mm-pin'),function(p){return p.style.left!==''&&p.style.top!=='';})");
@@ -118,9 +118,9 @@
   }
 
   function afterStyle(){
-    run('após troca de estilo: 9 pins, posicionados, sem duplicata', function(){
+    run('após troca de estilo: '+pinCount+' pins, posicionados, sem duplicata', function(){
       var n=ev("document.querySelectorAll('#mapPins .mm-pin').length");
-      return n===9 &&
+      return n===pinCount &&
         ev("Object.keys(mapPinEls||{}).length===document.querySelectorAll('#mapPins .mm-pin').length") &&
         ev("Array.prototype.every.call(document.querySelectorAll('#mapPins .mm-pin'),function(p){return p.style.left!==''&&p.style.top!=='';})");
     });
@@ -132,6 +132,11 @@
       var noOpen=ev("!mapCardState");
       ev("window.matchMedia=window.__origMM; delete window.__origMM;");
       return dispatched && noOpen;
+    });
+
+    run('diagonalização: horizontal/vertical → 45° biaxial (axis-lock workaround)', function(){
+      return ev("(function(){ var R=mmDiagDelta(100,0),L=mmDiagDelta(-100,0),D=mmDiagDelta(0,100),U=mmDiagDelta(0,-100); var diag=function(a){return Math.abs(Math.abs(a[0])-Math.abs(a[1]))<0.001&&Math.abs(a[0])>0;;}; return diag(R)&&diag(L)&&diag(D)&&diag(U)&&R[0]>0&&R[1]<0&&L[0]<0&&L[1]>0&&D[0]>0&&D[1]>0&&U[0]<0&&U[1]<0&&R[0]===-L[0]&&R[1]===-L[1]&&D[0]===-U[0]&&D[1]===-U[1]; })()") &&
+             ev("(function(){ var d=mmDiagDelta(30,20); return Math.abs(d[0]-30)<1e-9&&Math.abs(d[1]-20)<1e-9; })()");
     });
 
     run('desktop: pointerenter abre card compacto', function(){
@@ -166,9 +171,9 @@
 
     ev("(function(){ var node=cy.nodes().filter(function(n){return n.data('title')==='Teste Harness Mapa';}); if(node.length) cy.remove(node[0]); })()");
     ev("syncMap()");
-    run('limpeza remove o nó de teste e volta a 9 pins', function(){
+    run('limpeza remove o nó de teste e volta a '+pinCount+' pins', function(){
       return ev("(function(){ return {gone:!cy.nodes().some(function(n){return n.data('title')==='Teste Harness Mapa';}), pins:document.querySelectorAll('#mapPins .mm-pin').length, keys:Object.keys(mapPinEls||{}).length}; })()").gone &&
-             ev("(function(){ return {pins:document.querySelectorAll('#mapPins .mm-pin').length, keys:Object.keys(mapPinEls||{}).length}; })()").pins===9 &&
+             ev("(function(){ return {pins:document.querySelectorAll('#mapPins .mm-pin').length, keys:Object.keys(mapPinEls||{}).length}; })()").pins===pinCount &&
              ev("!(function(){ var node=cy.nodes().filter(function(n){return n.data('title')==='Teste Harness Mapa';}); return node.length; })()");
     });
 
