@@ -421,9 +421,9 @@
         <label title="Dois dedos no touchpad arrastam o mapa em qualquer direção; a pinça (ctrl+scroll) dá zoom"><input type="checkbox" id="mapGest2F" onchange="setGest2F(this.checked)"> 2 dedos = arrastar mapa</label>
         <div class="mg-row"><span title="Como o arrasto do touchpad se comporta quando &apos;2 dedos&apos; está ligado">Arrasto</span>
           <select id="mapPanMode" onchange="setGestMode(this.value)" title="Modo de arrasto do touchpad (2 dedos ligado)">
-            <option value="diag">Sempre diagonal (atual)</option>
+            <option value="native" selected>Direto (nativo) — V/H/D originais</option>
+            <option value="diag">Sempre diagonal (45°)</option>
             <option value="diagonly">Só diagonais (ignora V/H)</option>
-            <option value="native">Direto (nativo)</option>
           </select></div>
         <div class="mg-t" style="margin-top:8px">Aparência</div>
         <label title="Colorir cada país (look mapa-múndi). Os países continuam clicáveis mesmo desligado"><input type="checkbox" id="mapCountryFills" onchange="setCountryFills(this.checked)"> Cores dos países</label>
@@ -1831,7 +1831,7 @@ function initMap(){
     mapObj.addControl(new maplibregl.NavigationControl(),'bottom-right');
     mapGest2F=mapPref('mv_gest_2f',true);
     countryFills=mapPref('mv_country_fills',false);
-    mapPanMode=mapModePref('mv_pan_mode','diag');
+    mapPanMode=mapModePref('mv_pan_mode','native');
     const cymapEl=document.getElementById('cymap');
     cymapEl.addEventListener('wheel',mmTrackpadPan,{capture:true,passive:false});
     mapObj.on('load',()=>{
@@ -1873,7 +1873,7 @@ const COUNTRY_COLORS_LOCK_KEY='mm_country_colors_lock';
 let countryColorOverrides=null;
 let countryDataCache=null;
 const MM_PHOTO_ZOOM=2.2;
-let mapGest2F=true, countryFills=true, mapPanMode='diag';
+let mapGest2F=true, countryFills=true, mapPanMode='native';
 function mapPref(key,def){ try{ const v=localStorage.getItem(key); return v===null?def:v==='1'; }catch(e){ return def; } }
 function setMapPref(key,on){ try{ localStorage.setItem(key,on?'1':'0'); }catch(e){} }
 function mapModePref(key,def){ try{ const v=localStorage.getItem(key); return v===null?def:v; }catch(e){ return def; } }
@@ -1895,9 +1895,9 @@ function setGest2F(on){
   toast(mapGest2F?'Touchpad: 2 dedos arrastam o mapa (pinça = zoom) ✓':'Touchpad: comportamento padrão (scroll = zoom) ✓','ok');
 }
 function setGestMode(mode){
-  if(['diag','diagonly','native'].indexOf(mode)<0) mode='diag';
+  if(['diag','diagonly','native'].indexOf(mode)<0) mode='native';
   mapPanMode=mode; setMapModePref('mv_pan_mode',mapPanMode);
-  const msgs={diag:'Sempre diagonal (atual) ✓',diagonly:'Só diagonais — V/H ignorados ✓',native:'Direto (nativo) ✓'};
+  const msgs={native:'Direto (nativo) — V/H/D originais ✓',diag:'Sempre diagonal (45°) ✓',diagonly:'Só diagonais — V/H ignorados ✓'};
   toast('Arrasto touchpad: '+msgs[mode],'ok');
 }
 function mmAxisKind(dx,dy){
@@ -2320,7 +2320,6 @@ function mmPinsInit(){
 }
 function mmPositionPins(){
   if(!mapObj||!mapPinsLayer) return;
-  try{ if(!mapObj.loaded()) return; }catch(e){ return; }
   for(const id in mapPinEls){
     const p=mapPinEls[id];
     if(!p.e||!p.ll||!p.ll.length) continue;
@@ -2507,9 +2506,15 @@ function setMapPick(force,silent){
   const cm=document.getElementById('cymap'); if(cm) cm.style.cursor=mapPickMode?'crosshair':'';
   if(!silent) toast(mapPickMode?'Modo marcação: clique no mapa para adicionar um item ✓':'Marcação cancelada','ok');
 }
+let mapPickMarker=null;
+function removePickMarker(){
+  if(mapPickMarker){ try{ mapPickMarker.remove(); }catch(e){} mapPickMarker=null; }
+}
 function openMapItemForm(lat,lng){
   if(!mapObj) return;
+  removePickMarker();
   const mk=new maplibregl.Marker({color:'#ff2d78'}).setLngLat([lng,lat]).addTo(mapObj);
+  mapPickMarker=mk;
   reverseGeo(lat,lng).then(ph=>{ buildMapItemOverlay(lat,lng,mk,ph||mapPickName||'Local'); mapPickName=''; })
     .catch(()=>{ buildMapItemOverlay(lat,lng,mk,mapPickName||'Local'); mapPickName=''; });
 }
@@ -2529,7 +2534,7 @@ function buildMapItemOverlay(lat,lng,mk,defName){
     '<span style="flex:1"><label style="font-size:11px;color:var(--muted)">TIPO</label><select id="mioPtype" style="width:100%;margin:4px 0;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--text)">'+ptOps+'</select></span></div>'+
     '<div class="hint" style="margin:6px 0 0;font-size:11px;color:var(--muted)">📍 Cria um item no plano com esta coordenada.'+(defName?' Nome sugerido pelo mapa.':'')+'</div>'+
     '<div style="display:flex;gap:8px;margin-top:10px">'+
-    '<button class="btn sm" style="flex:1" onclick="hideMapItemOverlay();try{'+(mk&&'mk.remove()')+'}catch(e){};setMapPick(false,true)">Cancelar</button>'+
+    '<button class="btn sm" style="flex:1" onclick="hideMapItemOverlay();removePickMarker();setMapPick(false,true)">Cancelar</button>'+
     '<button class="btn sm primary" style="flex:2;background:var(--accent);color:var(--oncolor)" onclick="createMapItemAt('+lat.toFixed(6)+','+lng.toFixed(6)+')">Criar item ✓</button></div>';
   ov.style.display='block';
   const inp=document.getElementById('mioName'); if(inp){ inp.focus(); inp.select(); }
@@ -2541,13 +2546,14 @@ function createMapItemAt(lat,lng){
   if(!title||!String(title).trim()){ toast('Dê um nome ao item','err'); return; }
   const id='n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
   cy.add({data:{id,title:String(title).trim(),cat,status:'planejado',desc:'',phase:null,loc:String(title).trim(),latll:[lat,lng],ptype,evitar:false,img:null}});
+  removePickMarker();
   hideMapItemOverlay();
   setMapPick(false,true);
   sync3D(); syncMap(); propagate();
   toast('Item adicionado no mapa ✓','ok');
 }
 function mmKey(e){
-  if(e.key==='Escape'){ hideMapCard(); hideMapItemOverlay(); setMapPick(false,true); hideMapSearch(); }
+  if(e.key==='Escape'){ hideMapCard(); hideMapItemOverlay(); removePickMarker(); setMapPick(false,true); hideMapSearch(); }
 }
 
 /* =========================================================
