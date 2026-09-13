@@ -151,7 +151,7 @@
   .mm-photo:hover{transform:scale(1.07) translateY(-2px)}
   .mm-photo.sel{box-shadow:0 0 0 4px var(--accent), 0 6px 18px rgba(0,0,0,.45)}
   .mm-photo.sel::after{display:none}
-  #mapPins{position:absolute;inset:0;z-index:1;pointer-events:none}
+  #mapPins{position:absolute;inset:0;z-index:3;pointer-events:none}
   #cymap .maplibregl-canvas-container{position:relative;z-index:2}
   #mapPins .mm-pin{position:absolute;left:0;top:0;pointer-events:auto;transform:translate(-50%,-50%)}
   #mapPins .mm-pin.mm-photo{transform:translate(-50%,-100%)}
@@ -340,9 +340,13 @@
   ::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px}
   ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
   @media (max-width:1200px){#app{--w-left:280px;--w-right:340px}}
-  @media (max-width:980px){#app{grid-template-columns:1fr;grid-template-rows:56px 50vh 1fr;grid-template-areas:none;overflow:auto}
-    aside#left,aside#right,.split,main{grid-area:auto;position:relative}
-    #dvL,#dvR{display:none}body{overflow:auto}#cy{min-height:46vh}}
+  @media (max-width:980px){#app{grid-template-columns:1fr;grid-template-rows:56px auto auto auto;grid-template-areas:none;overflow:auto}
+    #app>*{grid-area:auto}
+    header,aside#left,aside#right,.split,main{grid-area:auto;position:relative}
+    header{overflow-x:auto;overflow-y:hidden;flex:0 0 auto}
+    main{min-height:52vh !important}
+    #dvL,#dvR{display:none}body{overflow:auto}#cy{min-height:46vh}#cymap{min-height:42vh}
+    #mapDetails{width:calc(100% - 28px);max-height:34vh;left:14px;right:auto;bottom:14px}
 </style>
 </head>
 <body>
@@ -2230,7 +2234,18 @@ function openMapCard(n, full){
   const ll=nodeLL(n); if(!ll) return;
   mmCancelHide();
   if(mapCardState && mapCardState.nodeId===id){
-    if(full && !mapCardState.full){ mapCardState.full=true; setCardClass(mapCardState,true); }
+    if(full && !mapCardState.full){
+      mapCardState.full=true;
+      const domd=mapCardState.pop.getElement();
+      if(domd){
+        const wrap=document.createElement('div');
+        wrap.innerHTML=mapCardHTML(n,true);
+        domd.innerHTML='';
+        domd.appendChild(wrap.firstChild);
+        domd.querySelector('.mc-close')&&domd.querySelector('.mc-close').addEventListener('click',()=>hideMapCard());
+        setCardClass(mapCardState,true);
+      }
+    }
     return;
   }
   hideMapCard();
