@@ -162,6 +162,7 @@ Pendentes (decisões do dono travam alguns): itens C.2/C.3 (dependem das decisõ
 - [x] `AGENTS.md` na pasta do projeto (atualizado p/ A.2).
 - [x] Atualizar `MDs Projects/Mapa-Vetorial-VIAJENS.md`.
 - [x] Atualizar `MDs Projects/_INDEX_MASTER.md`.
+- [x] **Duplo clique do mapa = zoom (Google Maps)** + **config IA compacta (2026-09-14)**: `dblclick` agora faz `mapObj.zoomTo(min(z+1,max),{center:e.lngLat,duration:250})` (antes criava pin vermelho/abria form → marcadores agora passam a ser via prompt IA ou busca; botão manual "➕ Marcar item" mantido); campos API key/Provider/Modelo movidos para `#aiConfigBox` colapsável (botão `#aiConfigToggle` — label "IA usada: Groq · sem chave" / "OpenRouter · sk-…"), preparação p/ servir IA no SaaS. Motor 13/13, zoom verificado no Chrome (1.6→2.6→3.6), 0 erros console.
 
 ---
 

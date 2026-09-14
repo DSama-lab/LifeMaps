@@ -567,22 +567,29 @@
     </div>
 
     <div class="panel" id="tab-ia">
-      <div class="sec" data-i18n="ia.sec1">1 · Chave da IA</div>
-      <div class="field"><label data-i18n="ia.keyLbl">API key (Groq ou OpenRouter)</label>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="password" id="aiKey" placeholder="sk-..." autocomplete="off" style="flex:1;min-width:0">
-          <button type="button" id="aiKeyEye" class="btn sm" title="mostrar/ocultar a chave" onclick="toggleAIKey()">👁</button>
+      <div class="sec" data-i18n="ia.sec1">1 · IA usada</div>
+      <div class="field">
+        <button type="button" class="btn btn-block" id="aiConfigToggle" onclick="toggleAIConfig()" title="Mostrar/ocultar provedor e token da IA" style="margin-bottom:8px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <span id="aiStatusLine">IA…</span><span style="opacity:.7">⚙️</span>
+        </button>
+        <div id="aiConfigBox" style="display:none">
+          <div class="field"><label data-i18n="ia.keyLbl">API key (Groq ou OpenRouter)</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="password" id="aiKey" placeholder="sk-..." autocomplete="off" style="flex:1;min-width:0">
+              <button type="button" id="aiKeyEye" class="btn sm" title="mostrar/ocultar a chave" onclick="toggleAIKey()">👁</button>
+            </div>
+            <div class="hint"><span data-i18n-html="ia.keyHint">A chave fica <b>só no seu navegador</b> (localStorage) e é <b>salva automaticamente</b> ao digitar — não precisa colar de novo.</span> <span id="aiStatus"></span></div>
+          </div>
+          <div class="field"><label data-i18n="ia.provider">Provider</label>
+            <select id="aiProvider">
+              <option value="groq">Groq</option>
+              <option value="openrouter">OpenRouter</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0"><label data-i18n="ia.model">Modelo</label>
+            <input id="aiModel" placeholder="deixe vazio para usar o padrão do provider">
+          </div>
         </div>
-        <div class="hint"><span data-i18n-html="ia.keyHint">A chave fica <b>só no seu navegador</b> (localStorage) e é <b>salva automaticamente</b> ao digitar — não precisa colar de novo.</span> <span id="aiStatus"></span></div>
-      </div>
-      <div class="field"><label data-i18n="ia.provider">Provider</label>
-        <select id="aiProvider">
-          <option value="groq">Groq</option>
-          <option value="openrouter">OpenRouter</option>
-        </select>
-      </div>
-      <div class="field"><label data-i18n="ia.model">Modelo</label>
-        <input id="aiModel" placeholder="deixe vazio para usar o padrão do provider">
       </div>
 
       <div class="sec" data-i18n="ia.sec2">2 · Prever impacto de uma mudança</div>
@@ -1853,7 +1860,7 @@ function initMap(){
       setMapSel(e);
     });
     mapObj.on('dblclick',(e)=>{
-      if(!mapPickMode) openMapItemForm(e.lngLat.lat, e.lngLat.lng);
+      mapObj.zoomTo(Math.min(mapObj.getZoom()+1, mapObj.getMaxZoom()), { center: e.lngLat, duration: 250 });
     });
     mapObj.on('contextmenu',(e)=>{ e.preventDefault(); });
     mapObj.on('move',()=>{ closeRadialMenu(); });
@@ -3596,12 +3603,24 @@ function saveAI(){
   localStorage.setItem('mv_ai_key',document.getElementById('aiKey').value.trim());
   localStorage.setItem('mv_ai_provider',document.getElementById('aiProvider').value);
   localStorage.setItem('mv_ai_model',document.getElementById('aiModel').value.trim());
+  refreshAIStatus();
+}
+function aiProviderLabel(){ return (localStorage.getItem('mv_ai_provider')||'groq')==='openrouter'?'OpenRouter':'Groq'; }
+function toggleAIConfig(){
+  const box=document.getElementById('aiConfigBox'); if(!box) return;
+  const show=box.style.display==='none';
+  box.style.display=show?'block':'none';
+  const b=document.getElementById('aiConfigToggle'); if(b) b.classList.toggle('on',show);
 }
 function refreshAIStatus(){
-  const s=document.getElementById('aiStatus'); if(!s)return;
+  const s=document.getElementById('aiStatus');
   const k=(localStorage.getItem('mv_ai_key')||'').trim();
-  if(k){ s.textContent='✔ chave salva ('+k.slice(0,12)+'…)'; s.style.color='var(--green,#34a853)'; }
-  else{ s.textContent=''; }
+  if(s){
+    if(k){ s.textContent='✔ chave salva ('+k.slice(0,12)+'…)'; s.style.color='var(--green,#34a853)'; }
+    else{ s.textContent=''; }
+  }
+  const line=document.getElementById('aiStatusLine');
+  if(line) line.textContent=aiProviderLabel()+(k?' · '+k.slice(0,10)+'…':' · sem chave');
   const eye=document.getElementById('aiKeyEye');
   if(eye) eye.textContent=(document.getElementById('aiKey').type==='password')?'👁':'🙈';
 }
