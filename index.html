@@ -370,6 +370,7 @@
       <option value="pt">🇧🇷 PT</option>
       <option value="en">🇬🇧 EN</option>
     </select>
+    <button class="btn" id="syncBtn" onclick="toggleSyncModal()" title="LIFE MAPS Sync — conta / nuvem">☁️</button>
     <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro">☀️</button>
     <button class="btn" onclick="saveLocal()" data-i18n="btn.save">Salvar</button>
     <button class="btn" onclick="exportJSON()" data-i18n="btn.export">Exportar</button>
@@ -930,6 +931,42 @@ en:{
   'toast.hdone':`Completed history inserted ✓`,
 },
 };
+Object.assign(I18N.pt,{
+  'sync.login':`Entrar / criar conta`,
+  'sync.cloud':`nuvem`,
+  'sync.offline':`modo local (offline)`,
+  'sync.logout':`Sair`,
+  'sync.upload':`Enviar agora`,
+  'sync.loggedAs':`Conectado como`,
+  'sync.email':`E-mail`,
+  'sync.password':`Senha`,
+  'sync.name':`Nome (opcional)`,
+  'sync.loginBtn':`Entrar`,
+  'sync.signupBtn':`Criar conta`,
+  'sync.googleBtn':`Entrar com Google`,
+  'sync.googleLink':`O login Google ativa na publicação (client_id configurado no deploy).`,
+  'sync.closed':`Fechar`,
+  'sync.okUp':`Plano enviado para a nuvem ✓`,
+  'sync.okDown':`Plano baixado da nuvem ✓`,
+});
+Object.assign(I18N.en,{
+  'sync.login':`Sign in / create account`,
+  'sync.cloud':`cloud`,
+  'sync.offline':`local mode (offline)`,
+  'sync.logout':`Sign out`,
+  'sync.upload':`Sync now`,
+  'sync.loggedAs':`Signed in as`,
+  'sync.email':`E-mail`,
+  'sync.password':`Password`,
+  'sync.name':`Name (optional)`,
+  'sync.loginBtn':`Sign in`,
+  'sync.signupBtn':`Create account`,
+  'sync.googleBtn':`Continue with Google`,
+  'sync.googleLink':`Google login activates on release (client_id set at deploy).`,
+  'sync.closed':`Close`,
+  'sync.okUp':`Plan uploaded to the cloud ✓`,
+  'sync.okDown':`Plan downloaded from the cloud ✓`,
+});
 let _lang = (localStorage.getItem('mv_lang')==='en')?'en':'pt';
 function curLang(){ return I18N[_lang]? _lang:'pt'; }
 function T(k,a){
@@ -3492,10 +3529,255 @@ function seedGraph(){
 function saveLocal(){
   try{ localStorage.setItem('mapa_vetorial',JSON.stringify(freezeGraph())); toast('Salvo no navegador ✓','ok'); }
   catch(e){ toast('Falha ao salvar: '+e.message,'err'); }
+  apiSave();
 }
 function loadLocal(){
   try{ const raw=localStorage.getItem('mapa_vetorial'); if(!raw)return false;
     return JSON.parse(raw); }catch(e){return false;}
+}
+
+/* ---------------------------------------------------------
+   SYNC COM A NUVEM (backend FastAPI · Fase 2B, 2026-09-14)
+   Offline-first: localStorage segue sendo a fonte local.
+   Autenticação = cookie httpOnly (`credentials:'include'`).
+   --------------------------------------------------------- */
+const SYNC_DOC_KEY='mv_cloud_doc_id';
+const SYNC_API_BASE=((function(){
+  let b=null;
+  try{ b=localStorage.getItem('mv_api_base')||null; }catch(e){}
+  if(!b){
+    const h=location.hostname;
+    b=(h==='localhost'||h==='127.0.0.1')?'http://127.0.0.1:8000':'https://api.lifemaps.pro';
+  }
+  return b.replace(/\/+$/,'');
+})());
+let syncState={online:false,user:null,docId:null,version:0,lastPut:{json:'',at:0}};
+let _pushTimer=null;
+function syncBtn(){ return document.getElementById('syncBtn'); }
+
+async function apiFetch(path,opts){
+  const o=opts||{};
+  const init={method:o.method||'GET',headers:{},credentials:'include',cache:'no-store'};
+  if(o.body!==undefined){ init.headers['Content-Type']='application/json'; init.body=typeof o.body==='string'?o.body:JSON.stringify(o.body); }
+  const res=await fetch(SYNC_API_BASE+path,init);
+  if(!res.ok){
+    let msg=res.status;
+    try{ const j=await res.json(); if(j&&j.detail!=null) msg=j.detail; }catch(e){}
+    const err=new Error(String(msg)); err.status=res.status; throw err;
+  }
+  if(res.status===204) return null;
+  const ct=res.headers.get('content-type')||'';
+  return ct.indexOf('json')>=0? await res.json() : await res.text();
+}
+
+function sigGraph(g){
+  const nodes=(g&&g.nodes||[]).map(n=>[n.id,n.title,n.cat,n.status,n.loc||''])
+    .sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0);
+  const edges=(g&&g.edges||[]).map(e=>[e.source,e.target,e.cond||''])
+    .sort((a,b)=>(a[0]+a[1])<(b[0]+b[1])?-1:1);
+  return JSON.stringify([nodes,edges]);
+}
+function localSig(){ const l=loadLocal(); return (l&&l.nodes)?sigGraph(l):'none'; }
+function seedSig(){ try{ return sigGraph(normalizeGraph(seedGraph())); }catch(e){ return 'none'; } }
+
+async function apiWhoami(){ return apiFetch('/api/auth/me'); }
+async function apiLogin(email,password){ return apiFetch('/api/auth/login',{method:'POST',body:{email:email,password:password}}); }
+async function apiRegister(email,password,name){ return apiFetch('/api/auth/register',{method:'POST',body:{email:email,password:password,name:name||''}}); }
+async function apiLogout(){ try{ await apiFetch('/api/auth/logout',{method:'POST'}); }catch(e){} }
+async function apiDocList(){ return apiFetch('/api/docs'); }
+async function apiDocGet(id){ return apiFetch('/api/docs/'+id); }
+async function apiDocCreate(){ return apiFetch('/api/docs',{method:'POST',body:{}}); }
+async function apiDocPut(id,data,baseVersion){ return apiFetch('/api/docs/'+id,{method:'PUT',body:{name:'LifeMaps',data:data,base_version:baseVersion}}); }
+
+function setSyncBtnOn(on,title){
+  const b=syncBtn(); if(!b) return;
+  b.style.color=on?'var(--accent2)':'';
+  b.style.borderColor=on?'var(--accent2)':'';
+  if(title) b.title=title;
+}
+function updateSyncBtn(){
+  const u=(syncState.online&&syncState.user)?syncState.user:null;
+  setSyncBtnOn(!!u, u?('LIFE MAPS · '+u.email): T('sync.login'));
+}
+
+async function apiResolve(doc){
+  syncState.docId=doc?doc.id:null;
+  syncState.version=doc?doc.version:0;
+  const server=(doc&&doc.data&&Array.isArray(doc.data.nodes)&&doc.data.nodes.length)?doc.data:null;
+  const lSig=localSig(), sSig=seedSig();
+  const isSeed=(lSig==='none'||lSig===sSig);
+  if(!server){
+    if(!isSeed && await apiPush(true)) toast(T('sync.okUp'),'ok');
+    return;
+  }
+  const serverSig=sigGraph(server);
+  if(serverSig===lSig) return;
+  if(isSeed||lSig==='none'){ await apiPull(); toast(T('sync.okDown'),'ok'); }
+  else if(await apiPush(true)) toast(T('sync.okUp'),'ok');
+}
+
+async function apiPull(){
+  if(!syncState.docId) return;
+  const doc=await apiDocGet(syncState.docId);
+  if(doc){ syncState.docId=doc.id; syncState.version=doc.version; }
+  const data=doc&&doc.data;
+  if(data&&Array.isArray(data.nodes)&&data.nodes.length){
+    GLOBAL=normalizeGraph(data); pathArr=[]; loadWorld([]);
+    try{ localStorage.setItem('mapa_vetorial',JSON.stringify(freezeGraph())); }catch(e){}
+  }
+  updateCrumb(); updateSummary();
+  try{ if(typeof applyDefaultMode==='function') applyDefaultMode(); }catch(e){}
+}
+async function apiPush(silent){
+  if(!syncState.docId) return false;
+  const graph=freezeGraph();
+  const json=JSON.stringify(graph);
+  if(syncState.lastPut.json===json) return true;
+  try{
+    const doc=await apiDocPut(syncState.docId,graph,syncState.version||null);
+    if(doc) syncState.version=doc.version;
+    syncState.lastPut={json:json,at:Date.now()};
+    return true;
+  }catch(e){
+    if(e.status===409){
+      toast('Nuvem: outro dispositivo salvou — baixando…','err');
+      try{ await apiPull(); }catch(e2){}
+      return false;
+    }
+    if(!silent) toast('Nuvem indisponível: '+e.message,'err');
+    return false;
+  }
+}
+function apiSave(){
+  if(!syncState.online||!syncState.user) return;
+  clearTimeout(_pushTimer);
+  _pushTimer=setTimeout(()=>{ syncState.online? apiPush(false) : null; },1500);
+}
+
+async function afterLogin(){
+  syncState.online=true;
+  const list=await apiDocList();
+  if(list&&list.length){
+    const meta=list[0];
+    syncState.docId=meta.id; syncState.version=meta.version||0;
+    try{ localStorage.setItem(SYNC_DOC_KEY,String(meta.id)); }catch(e){}
+    const doc=await apiDocGet(meta.id);
+    await apiResolve(doc);
+  }else{
+    const doc=await apiDocCreate();
+    syncState.docId=doc.id; syncState.version=doc.version||0;
+    try{ localStorage.setItem(SYNC_DOC_KEY,String(doc.id)); }catch(e){}
+    await apiResolve(doc);
+  }
+  updateSyncBtn();
+}
+async function apiSyncBoot(){
+  let u=null;
+  try{ u=await apiWhoami(); }
+  catch(e){ syncState.online=false; syncState.user=null; updateSyncBtn(); return; }
+  syncState.user=u; syncState.online=true;
+  try{
+    const savedDoc=localStorage.getItem(SYNC_DOC_KEY);
+    if(savedDoc){
+      try{ const doc=await apiDocGet(parseInt(savedDoc,10)); await apiResolve(doc); }
+      catch(e){ await afterLogin(); }
+    }else await afterLogin();
+  }catch(e){
+    syncState.online=false;
+    if(e&&e.status===401){ syncState.user=null; }
+    else console.warn('[lifemaps] sync boot:',e);
+  }
+  updateSyncBtn();
+}
+
+function setSyncErr(m){
+  const el=document.getElementById('syncErrMsg'); if(!el) return;
+  el.style.display=m?'block':'none'; el.textContent=m||'';
+}
+function toggleSyncModal(){ buildSyncModal(); }
+function buildSyncModal(){
+  const box=document.getElementById('modalBox'); if(!box) return;
+  const u=(syncState.online&&syncState.user)?syncState.user:null;
+  const cid=syncGoogleClientId();
+  let h='<h3>☁️ LIFE MAPS · Sync</h3>';
+  if(u){
+    h+='<div class="field"><label>'+T('sync.loggedAs')+'</label><input readonly value="'+esc(u.email)+'" style="background:transparent;border:1px dashed var(--line)"></div>'+
+       '<div class="hint">Plano v'+syncState.version+' · '+T(syncState.online?'sync.cloud':'sync.offline')+'</div>'+
+       '<div class="modal-actions">'+
+         '<button class="btn" onclick="closeModal()">'+T('sync.closed')+'</button>'+
+         '<button class="btn" onclick="apiPushNow()">'+T('sync.upload')+'</button>'+
+         '<button class="btn" onclick="apiLogoutUI()">'+T('sync.logout')+'</button>'+
+       '</div>';
+  }else{
+    h+='<div class="field"><label>'+T('sync.email')+'</label><input id="syncEmail" type="email" placeholder="voce@exemplo.com"></div>'+
+       '<div class="field"><label>'+T('sync.password')+'</label><input id="syncPass" type="password" onkeydown="if(event.key===\'Enter\')apiLoginUI()"></div>'+
+       '<div class="field"><label>'+T('sync.name')+'</label><input id="syncName" type="text"></div>'+
+       (cid?('<button class="btn" onclick="gsiPrompt()" style="width:100%;margin:6px 0">'+T('sync.googleBtn')+'</button>')
+          :('<div class="hint">'+T('sync.googleLink')+'</div>'))+
+       '<div id="syncErrMsg" style="display:none;color:#e03131;margin:6px 0"></div>'+
+       '<div class="modal-actions">'+
+         '<button class="btn" onclick="closeModal()">'+T('sync.closed')+'</button>'+
+         '<button class="btn" onclick="apiRegisterUI()">'+T('sync.signupBtn')+'</button>'+
+         '<button class="btn primary" onclick="apiLoginUI()">'+T('sync.loginBtn')+'</button>'+
+       '</div>';
+  }
+  box.innerHTML=h;
+  document.getElementById('modal').classList.add('open');
+  const em=document.getElementById('syncEmail'); if(em) em.focus();
+}
+function syncFields(){
+  const em=document.getElementById('syncEmail'), pw=document.getElementById('syncPass');
+  if(!em) return null;
+  return {email:em.value.trim().toLowerCase(),password:pw?pw.value:''};
+}
+async function apiLoginUI(){
+  const v=syncFields(); if(!v) return;
+  setSyncErr('');
+  if(!v.email||!v.password){ setSyncErr('Preencha e-mail e senha'); return; }
+  try{ syncState.user=await apiLogin(v.email,v.password); await afterLogin(); closeModal(); toast('Conectado ✓','ok'); }
+  catch(e){ setSyncErr(e&&e.status===401?'E-mail ou senha incorretos':('Falha: '+e.message)); }
+}
+async function apiRegisterUI(){
+  const v=syncFields(); if(!v) return;
+  setSyncErr('');
+  const name=(document.getElementById('syncName')||{}).value||'';
+  if(!v.email||v.password.length<8){ setSyncErr('E-mail válido + senha com mínimo 8 caracteres'); return; }
+  try{ syncState.user=await apiRegister(v.email,v.password,name); await afterLogin(); closeModal(); toast('Conta criada ✓','ok'); }
+  catch(e){ setSyncErr(e&&e.status===409?'E-mail já cadastrado':('Falha: '+e.message)); }
+}
+async function apiLogoutUI(){
+  await apiLogout();
+  syncState.online=false; syncState.user=null; syncState.lastPut={json:'',at:0};
+  updateSyncBtn(); closeModal(); toast('Saiu ✓','ok');
+}
+async function apiPushNow(){
+  setSyncErr('');
+  if(!syncState.docId){ toast('Nuvem indisponível','err'); return; }
+  if(await apiPush(false)) toast(T('sync.okUp'),'ok');
+}
+
+function syncGoogleClientId(){
+  try{ const v=localStorage.getItem('mv_google_client_id'); if(v) return v; }catch(e){}
+  return (window.LIFEMAPS_GOOGLE_CLIENT_ID||'');
+}
+function gsiPrompt(){
+  const cid=syncGoogleClientId(); if(!cid){ setSyncErr(T('sync.googleLink')); return; }
+  function init(){
+    window.google.accounts.id.initialize({client_id:cid,callback:resp=>{
+      if(resp&&resp.credential) doGoogleLogin(resp.credential); else setSyncErr('Google login falhou');
+    }});
+    window.google.accounts.id.prompt();
+  }
+  if(window.google&&window.google.accounts){ init(); return; }
+  const s=document.createElement('script');
+  s.src='https://accounts.google.com/gsi/client'; s.async=true; s.defer=true;
+  s.onload=init; s.onerror=function(){ setSyncErr('Não foi possível carregar o Google login'); };
+  document.head.appendChild(s);
+}
+async function doGoogleLogin(idToken){
+  setSyncErr('');
+  try{ syncState.user=await apiFetch('/api/auth/google',{method:'POST',body:{id_token:idToken}}); await afterLogin(); closeModal(); toast('Conectado ✓','ok'); }
+  catch(e){ setSyncErr('Google: '+e.message); }
 }
 function exportJSON(){
   const blob=new Blob([JSON.stringify(freezeGraph(),null,2)],{type:'application/json'});
@@ -4297,10 +4579,11 @@ function applyDefaultMode(){
   refreshSubCatLbl();
   applyLang();
   updateSummary();
+  apiSyncBoot();
 })();
 
 window.addEventListener('beforeunload',()=>{ try{ localStorage.setItem('mapa_vetorial',JSON.stringify(freezeGraph())); }catch(e){} });
-setInterval(()=>{ try{ if(cy) localStorage.setItem('mapa_vetorial',JSON.stringify(freezeGraph())); }catch(e){} },45000);
+setInterval(()=>{ try{ if(cy){ localStorage.setItem('mapa_vetorial',JSON.stringify(freezeGraph())); apiSave(); } }catch(e){} },45000);
 </script>
 </body>
 </html>

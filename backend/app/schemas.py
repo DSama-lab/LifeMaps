@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -31,6 +32,15 @@ class DocOut(BaseModel):
     name: str
     version: int
     data: dict
+
+    model_config = {"from_attributes": True}
+
+
+class DocMetaOut(BaseModel):
+    id: int
+    name: str
+    version: int
+    updated_at: datetime
 
     model_config = {"from_attributes": True}
 

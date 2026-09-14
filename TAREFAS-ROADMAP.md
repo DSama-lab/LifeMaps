@@ -2,7 +2,7 @@
 
 > Nome do projeto: **Mental Maps** (ex-"Mapa Vetorial Viajens").
 > Essa lista é persistida aqui para NENHUMA tarefa se perder entre sessões.
-> Última atualização: 2026-09-12 (rodada: Concluído + Histórico/diário + i18n PT/EN + tons bebê + deploy avaliado + **Fase B itens seguros + harness 3D (15/15)** + **Itens Inteligentes — extração curada** + **D.1 Orçamento por nó** + **Fase E Mapa Premium — 3 bugfixs: pins duplicados (#mapPins próprio) + CORS fontes Carto (fonts.openmaptiles.org) + seletor `.sel` (parênteses)**)
+> Última atualização: 2026-09-14 (rodada: **Sync com a nuvem — Fase 2B frontend**)
 - **09-12 · Fase E bugfixs (Playwright)**: pins do mapa NUNCA mais duplicam (camada `#mapPins` reusa por `data-id`; 5× syncMap + 6 trocas de estilo = 9 pins fixos); fontes dos mapas `escuro`/`vias` (Carto) passam a carregar via `fonts.openmaptiles.org` (CORS) — 0 erros de console; anel `.sel` do card no mapa finalmente aplica (erro de precedência `CSS.escape?` sem parênteses). Motor 13/13 verde. Screenshot: `FaseE-mapa-premium.png`.
 
 ---
@@ -163,6 +163,7 @@ Pendentes (decisões do dono travam alguns): itens C.2/C.3 (dependem das decisõ
 - [x] Atualizar `MDs Projects/Mapa-Vetorial-VIAJENS.md`.
 - [x] Atualizar `MDs Projects/_INDEX_MASTER.md`.
 - [x] **Duplo clique do mapa = zoom (Google Maps)** + **config IA compacta (2026-09-14)**: `dblclick` agora faz `mapObj.zoomTo(min(z+1,max),{center:e.lngLat,duration:250})` (antes criava pin vermelho/abria form → marcadores agora passam a ser via prompt IA ou busca; botão manual "➕ Marcar item" mantido); campos API key/Provider/Modelo movidos para `#aiConfigBox` colapsável (botão `#aiConfigToggle` — label "IA usada: Groq · sem chave" / "OpenRouter · sk-…"), preparação p/ servir IA no SaaS. Motor 13/13, zoom verificado no Chrome (1.6→2.6→3.6), 0 erros console.
+- [x] **Sync com a nuvem — Fase 2B frontend (2026-09-14)**: login/registro (email+senha + Google pronto no backend) com cookie httpOnly; **um doc por usuário** (`GET/PUT /api/docs/:id`, `base_version` → 409); autosave local→PUT (debounce 1,5s) + pull no boot; **offline-first** — localStorage continua a fonte local e o push é best-effort; resolução de conflito por **assinatura semântica** (id/title/cat/status/loc + edges) — local não-seed → “meu dispositivo vence”; local seed/fresh + nuvem com dados → pull; 409 → recarrega via pull automático; UI discreta: botão **☁️** no header + modal (`buildSyncModal`) + `apiSyncBoot()` no boot; `SYNC_API_BASE` por env `mv_api_base` (default `127.0.0.1:8000` local / `api.lifemaps.pro` produção). **Validado de ponta a ponta com mock Node do contrato da API**: register→doc criado e plano enviado, editar→PUT (v+1), localStorage limpo (novo device)→login→pull restaura, base_version obsoleto→409+pull (conteúdo preservado), logout→/me 401; botão sync volta ao estado off. Backend ganhou `GET /api/docs` (lista) + `DocMetaOut`. Motores: 13/13, mapa 18/18, 3D 15/15; único console error = probe offline do backend (some quando o backend está no ar). Pendente: deploy VPS (docker-compose) + `CORS_ORIGINS` do domínio + opt-in Google (`mv_google_client_id`/`LIFEMAPS_GOOGLE_CLIENT_ID`).
 
 ---
 

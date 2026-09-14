@@ -7,10 +7,19 @@ from sqlalchemy.orm import Session
 from .. import config
 from ..db import get_db
 from ..models import Document, User
-from ..schemas import DocOut, DocPutIn
+from ..schemas import DocMetaOut, DocOut, DocPutIn
 from ..security import enforce_doc_rate, get_current_user
 
 router = APIRouter(prefix="/api/docs", tags=["docs"])
+
+
+@router.get("", response_model=list[DocMetaOut])
+def list_docs(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    return db.scalars(
+        select(Document)
+        .where(Document.user_id == user.id)
+        .order_by(Document.updated_at.desc())
+    ).all()
 
 
 @router.get("/{doc_id}", response_model=DocOut)

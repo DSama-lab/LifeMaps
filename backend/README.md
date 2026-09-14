@@ -41,6 +41,8 @@ backend/
 
 ## Rodando (local)
 
+**Requisito**: Python 3.12 ou 3.13 — `pydantic-core` não tem wheel pré-compilado para Python 3.14 no Windows (falta Visual C++ Build Tools para compilar; sem Docker local). Se tiver Python 3.12/3.13 instalado ou Docker Desktop, o `pip install -r requirements.txt` funciona normalmente.
+
 1. `python -m venv .venv` e ative.
 2. `pip install -r requirements.txt`
 3. `copy .env.example .env` e preencha (Postgres local: `DATABASE_URL=postgresql+psycopg://postgres:SENHA@localhost:5432/lifemaps`; gere `SESSION_SECRET` com `python -c "import secrets; print(secrets.token_urlsafe(48))"`).
