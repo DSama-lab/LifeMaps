@@ -20,9 +20,11 @@ backend/
       auth.py      # /api/auth/google, /register, /login, /logout, /me
       docs.py      # GET/PUT/POST /api/docs — documento do plano do usuário
   Dockerfile
-  docker-compose.yml   # postgres (no ports p/ fora) + api + caddy (80/443)
-  Caddyfile            # TLS automático (Let's Encrypt) + headers de segurança
-  .env.example         # cópie e preencha em .env (NUNCA versionar credenciais)
+  docker-compose.yml        # stack local/dev (postgres + api + caddy)
+  docker-compose.prod.yml   # stack de produção (healthchecks + caddy TLS)
+  Caddyfile.prod            # TLS automático (Let's Encrypt) + headers de segurança
+  DEPLOY-VPS.md             # runbook p/ subir na VPS SEM o opencode (VPN off)
+  .env.example              # cópie e preencha em .env (NUNCA versionar credenciais)
 ```
 
 ## Endpoints
@@ -51,10 +53,13 @@ backend/
 
 ## Rodando no VPS (aaPanel/Docker)
 
+> Passo a passo completo e auto-suficiente (para executar **sem o opencode**, com VPN desligada):
+> **`DEPLOY-VPS.md`** — inclui conflito de porta 80/443 com o Nginx do aaPanel, backup agendado e troubleshooting.
+
 ```bash
 cp .env.example .env        # preencha TODAS as variáveis (DOMAIN incluso)
-docker compose up -d --build
-docker compose logs -f api
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml logs -f api
 ```
 
 - Postgres: **sem porta pública** (só rede interna) — nunca mapeie 5432 no compose.
