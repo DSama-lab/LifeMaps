@@ -14,6 +14,7 @@ The application is distributed as a single-file HTML document. There is no build
 - **Premium map (MapLibre GL).** A custom pin layer (`#mapPins`) that cannot duplicate, a phase trajectory layer, a political/region layer, local search plus OpenStreetMap geocoding, item cards, and five base styles (standard, dark, streets, political, satellite) with CORS-safe fonts.
 - **Adaptive layout.** Portrait phones collapse the app into a single column; landscape phones switch to a two-pane layout (side panel + full-height map). Pins stay clickable on both (they sit above the canvas).
 - **Configurable trackpad panning.** In the map gear menu you can choose how two-finger drag behaves: native (as sent by the browser — the default), always diagonal (axis-lock workaround), or diagonals only (pure vertical/horizontal gestures are ignored). The choice is stored in the browser.
+- **Smooth, flood-free panning.** Wheel events are coalesced into a single camera move per animation frame, so dragging stays fluid even at high zoom while tiles are loading; `overscroll-behavior` is disabled so horizontal swipes never trigger history navigation.
 - **Responsive map dragging.** Markers reposition on every camera move frame (no dependency on tiles loading), so items track the map instantly even while zooming.
 - **Per-node sub-plan.** Drill-down into a subtree with a breadcrumb trail.
 - **Per-node budget.** Cost per step, prerequisite cascade, and a financial summary with live currency conversion (no key required).
@@ -37,15 +38,21 @@ The application opens in Map mode when the graph contains geolocated nodes. The 
 |---|---|---|
 | Conditional engine | `node test-motor.js` | 13/13 |
 | 3D / globe | `http://127.0.0.1:8794/test-3d.html` | 15/15 |
-| Premium map | `http://127.0.0.1:8794/test-map.html` | 17/17 |
+| Premium map | `http://127.0.0.1:8794/test-map.html` | 18/18 |
 
-Note for `test-map.html`: cache-bust the application iframe before running (`f.src='index.html?cv='+Date.now()`), otherwise the HTTP cache may serve a stale copy of `index.html`.
+`test-map.html` cache-busts the application iframe automatically (`app.src='index.html?cv='+Date.now()`), so no stale copy of `index.html` is served.
+
+The map repaints the existing vector layers with a Google-style palette (water `#81d1e9`, land `#f2efe9`, waterways `#a9d9ec`) with no extra layers or toggles.
 
 ## Screenshots
 
 **Premium map — pins and item card** (`FaseE-mapa-premium.png`)
 
 ![LifeMaps - Premium map](FaseE-mapa-premium.png)
+
+**Google-style palette — water #81d1e9 / land #f2efe9** (`FaseE-paleta-google.png`)
+
+![LifeMaps - Google palette](FaseE-paleta-google.png)
 
 **3D globe** (`test-3d-globo.png`)
 

@@ -62,7 +62,7 @@
     --shadow:0 10px 40px rgba(0,0,0,.5);
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0}
+  html,body{height:100%;margin:0;overscroll-behavior:none}
   body{
     font-family:'Inter',system-ui,sans-serif;
     background:
@@ -131,7 +131,7 @@
   #cy3d{position:absolute;inset:0;display:none}
   #cy3d canvas{cursor:grab}
   #cy3d canvas:active{cursor:grabbing}
-  #cymap{position:absolute;inset:0;display:none;z-index:2}
+  #cymap{position:absolute;inset:0;display:none;z-index:2;overscroll-behavior:none}
   #cymap .maplibregl-canvas{cursor:grab}
   #cymap .maplibregl-canvas:active{cursor:grabbing}
   #mapBar{position:absolute;top:14px;right:14px;z-index:7;display:flex;align-items:center;gap:8px;
@@ -1832,6 +1832,7 @@ function initMap(){
     mapGest2F=mapPref('mv_gest_2f',true);
     countryFills=mapPref('mv_country_fills',false);
     mapPanMode=mapModePref('mv_pan_mode','native');
+    if(mapPanMode==='diagonly'){ mapPanMode='native'; setMapModePref('mv_pan_mode','native'); }
     const cymapEl=document.getElementById('cymap');
     cymapEl.addEventListener('wheel',mmTrackpadPan,{capture:true,passive:false});
     mapObj.on('load',()=>{
@@ -1839,6 +1840,7 @@ function initMap(){
       loadPoliticalLayer();
       syncMap();
       mmApplyPinMode();
+      try{ mmApplyMapTheme(); }catch(e){}
       // a trajetória precisa do estilo totalmente pronto (loaded()); refaz um pouco depois
       setTimeout(()=>{ try{ if(mapObj&&mapObj.loaded()) drawTrajectory(); }catch(e){} }, 800);
     });
@@ -1874,6 +1876,10 @@ let countryColorOverrides=null;
 let countryDataCache=null;
 const MM_PHOTO_ZOOM=2.2;
 let mapGest2F=true, countryFills=true, mapPanMode='native';
+let mmPanPending=[0,0], mmPanRaf=null;
+const MAP_WATER_FILL='#81d1e9';      // oceano / lagos (estilo Google Maps)
+const MAP_WATER_LINE='#a9d9ec';      // rios / canais / linhas de água (mais claras)
+const MAP_LAND='#f2efe9';            // terra / fundo do mapa (bege estilo Google)
 function mapPref(key,def){ try{ const v=localStorage.getItem(key); return v===null?def:v==='1'; }catch(e){ return def; } }
 function setMapPref(key,on){ try{ localStorage.setItem(key,on?'1':'0'); }catch(e){} }
 function mapModePref(key,def){ try{ const v=localStorage.getItem(key); return v===null?def:v; }catch(e){ return def; } }
@@ -1936,17 +1942,22 @@ function mmTrackpadPan(e){
   if(!mapGest2F) return;               // recurso desligado → comportamento nativo
   if(e.ctrlKey) return;                // pinça do trackpad (ctrl+wheel) → zoom nativo
   e.preventDefault(); e.stopPropagation();
-  let d;
+  let dx=e.deltaX, dy=e.deltaY;
   if(mapPanMode==='diagonly'){
-    const k=mmAxisKind(e.deltaX, e.deltaY);
+    const k=mmAxisKind(dx, dy);
     if(k===0||k===1||k===2) return;    // nulo/vertical/horizontal puro → ignora
-    d=[e.deltaX, e.deltaY];
-  } else if(mapPanMode==='native'){
-    d=[e.deltaX, e.deltaY];
-  } else {
-    d=mmDiagDelta(e.deltaX, e.deltaY);
+  } else if(mapPanMode==='diag'){
+    const d=mmDiagDelta(dx, dy);
+    dx=d[0]; dy=d[1];
   }
-  try{ mapObj.panBy(d, {duration:0}); }catch(err){}
+  mmPanPending[0]+=dx; mmPanPending[1]+=dy;
+  if(mmPanRaf) return;
+  mmPanRaf=requestAnimationFrame(()=>{
+    mmPanRaf=null;
+    const p=mmPanPending; mmPanPending=[0,0];
+    if(!mapObj || (!p[0] && !p[1])) return;
+    try{ mapObj.panBy(p, {duration:0}); }catch(err){}
+  });
 }
 function loadCountryOverrides(){
   if(countryColorOverrides!==null) return;
@@ -2112,6 +2123,7 @@ function mapRestyleReady(){
       drawTrajectory();
       if(mapSelFeature) highlightRegion();
       refreshColorControls();
+      try{ mmApplyMapTheme(); }catch(e){}
     }catch(e){ console.warn('[mm] restyle', e); }
   };
   // eventos de estilo não são garantidos de disparar em tempo razoável (tiles/fluxo lento):
@@ -2141,6 +2153,19 @@ function styleWithFonts(spec){
     spec.glyphs='https://fonts.openmaptiles.org/{fontstack}/{range}.pbf';
   }
   return spec;
+}
+function mmApplyMapTheme(){
+  if(!mapObj) return;
+  const paint=(id,prop,val)=>{ try{ mapObj.setPaintProperty(id,prop,val); }catch(e){} };
+  const layers=(mapObj.getStyle()||{}).layers||[];
+  for(const l of layers){
+    if(l.type==='background') paint(l.id,'background-color',MAP_LAND);
+    else if(l.type==='fill'){
+      if(/water|ocean|sea|lake|river|canal|harbor/i.test(l.id)) paint(l.id,'fill-color',MAP_WATER_FILL);
+      else if(/^(land|earth|landcover)$/i.test(l.id)) paint(l.id,'fill-color',MAP_LAND);
+    }
+    else if(l.type==='line' && /waterway|river|lake|canal|stream/i.test(l.id)) paint(l.id,'line-color',MAP_WATER_LINE);
+  }
 }
 async function setMapStyle(style){
   if(!mapObj) return;
