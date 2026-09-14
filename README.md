@@ -64,10 +64,14 @@ The map repaints the existing vector layers with a Google-style palette (water `
 
 Single-file HTML, CSS, and JavaScript. Libraries are loaded from CDNs: [Cytoscape.js](https://js.cytoscape.org/), [three.js](https://threejs.org/), [3d-force-graph](https://github.com/vasturiano/3d-force-graph), and [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/).
 
+## SaaS backend (Phase 2A)
+
+A FastAPI backend scaffold lives in [`backend/`](backend/README.md): document storage per user (`users` + `docs`, JSONB), Google OAuth + password login (Argon2id), httpOnly session cookie, Postgres running in Docker with no public port, and a Caddy reverse proxy with automatic HTTPS. No Supabase dependency — the owner's own Postgres on the VPS is used. Full planning, security checklist and roadmap: `MDs Projects/Lifemaps/PLANO-SAAS-SEGURANCA.md` (local docs folder).
+
 ## License
 
 All rights reserved. Do not reuse the code in other projects without prior consent.
 
 ---
 
-*Formerly referred to as "Mapa Vetorial Viajens" and "Mental Maps".*
+*Formerly referred to as "Mapa Vetorial Viajens" and "Mental Maps". Folder renamed to "LIFEMAPS  PROJECT" on 2026-09-14.*

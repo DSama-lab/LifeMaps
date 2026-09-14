@@ -1,7 +1,9 @@
-# AGENTS.md — MAPA VETORIAL VIAJENS / MENTAL MAPS
+# AGENTS.md — LIFEMAPS PROJECT (ex-"Mapa Vetorial Viajens" / "Mental Maps")
 
 > Diretrizes para o opencode (e qualquer agente) trabalhar **nesta pasta**.
 > Regra-mãe: ver `AGENTS.md` raiz do projeto ("AAA digital PROJECT").
+> Pasta renomeada em 2026-09-14: `MAPA VETORIAL VIAJENS` → `LIFEMAPS  PROJECT`.
+> Planejamento SaaS/segurança/mobile: `MDs Projects/Lifemaps/PLANO-SAAS-SEGURANCA.md` · Evolução: `MDs Projects/Lifemaps/LIFEMAPS-EVOLUCAO.md`.
 
 ---
 
@@ -44,6 +46,8 @@ Motor condicional: dentro do `index.html` (`propagate()`, `parseCond()`, `condHo
 | `test-3d-globo.png` | Screenshot do globo 3D registrado pela rodada do harness. |
 | `test-map.html` | Harness do Mapa Premium (18/18): pins sem duplicação + `project()`, card compacto→full + anel `.sel`, touch-guard, troca de estilo (glyphs CORS-safe, `traj-line` converge), **paleta Google (água #81d1e9 / terra #f2efe9)**, diagonalização do touchpad, busca, criação/limpeza de item. Contagem de pins é **dinâmica** (`pinCount` do boot). **Atenção**: usa `dispatchEvent` — não valida hit-test/clique físico (isso é coberto pela validação mobile Playwright). |
 | `FaseE-mapa-premium.png` | Screenshot do Mapa Premium (pins + card) — rodada de 2026-09-12. |
+| `FaseE-paleta-google.png` | Screenshot da paleta Google (água #81d1e9/terra #f2efe9) — 2026-09-14. |
+| `backend/` | **API SaaS (Fase 2A, 2026-09-14)**: FastAPI + Postgres (JSONB) + Google OAuth/senha (sessão httpOnly), `docker-compose.yml` (postgres sem porta pública + api + Caddy TLS), `.env.example` (anti-credencial). Ver `backend/README.md` e `MDs Projects/Lifemaps/PLANO-SAAS-SEGURANCA.md`. |
 | `TAREFAS-ROADMAP.md` | Lista de tarefas persistente (Fases A–E; C.0/C.1 concluídas). |
 | `RELATORIO-EVOLUCAO.md` | Relatório (Fase A + A.2 + C.0/C.1). |
 | `# MASTER SPEC - MENTALMAP — MAPA VETORIAL.md` | Visão do produto. |

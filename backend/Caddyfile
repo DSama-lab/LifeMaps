@@ -1,0 +1,20 @@
+# Life Maps — Caddy (reverse proxy + TLS automático via Let's Encrypt)
+# Defina DOMAIN no .env do backend (ex: DOMAIN=api.lifemaps.pro).
+# Antes de abrir para o público: apontar o DNS do domínio para o VPS e rodar o compose.
+
+{$DOMAIN} {
+	encode gzip
+
+	reverse_proxy api:8000
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+}
+
+# Bloco para teste local (sem domínio/Let's Encrypt): http://localhost
+http://localhost:8080, http://127.0.0.1:8080 {
+	reverse_proxy api:8000
+}
