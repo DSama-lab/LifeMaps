@@ -136,6 +136,13 @@ for (const [name, body] of FUNCS) {
   src = src.replace(pattern, body);
 }
 
+// Public demo: login gate disabled (private/prod requires login).
+src = src.replace(/var MV_REQUIRE_LOGIN = true;/, 'var MV_REQUIRE_LOGIN = false;');
+if (src.indexOf('MV_REQUIRE_LOGIN = false;') < 0) {
+  console.error('[build-demo] MV_REQUIRE_LOGIN flag not found in ' + SRC);
+  process.exit(1);
+}
+
 // Neutralize UI copy that references the author's real routes/personal facts.
 const SANITIZE = [
   ['Malásia, Filipinas, Montenegro', 'Nova Zelândia, Canadá, Irlanda'],

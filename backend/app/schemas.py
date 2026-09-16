@@ -13,6 +13,16 @@ class PasswordLoginIn(BaseModel):
     password: str
 
 
+class ForgotPasswordIn(BaseModel):
+    email: str
+
+
+class ResetPasswordIn(BaseModel):
+    email: str
+    token: str
+    password: str
+
+
 class RegisterIn(BaseModel):
     email: str
     password: str

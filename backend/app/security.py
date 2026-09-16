@@ -13,6 +13,7 @@ from .models import User
 
 _argon = PasswordHasher()
 _session = URLSafeTimedSerializer(config.SESSION_SECRET, salt="lifemaps-session")
+_reset = URLSafeTimedSerializer(config.RESET_TOKEN_SECRET, salt="lifemaps-pwreset")
 
 
 def hash_password(password: str) -> str:
@@ -39,6 +40,24 @@ def verify_session(token: str, max_age: int | None = None) -> Optional[int]:
         payload = _session.loads(token, max_age=max_age or config.SESSION_MAX_AGE)
         return int(payload)
     except (BadSignature, ValueError):
+        return None
+
+
+def sign_reset_token(user_id: int, email: str) -> str:
+    return _reset.dumps(f"{user_id}:{email.strip().lower()}")
+
+
+def verify_reset_token(token: str, email: str, max_age: int) -> Optional[int]:
+    try:
+        payload = _reset.loads(token, max_age=max_age)
+    except Exception:
+        return None
+    parts = payload.split(":", 1)
+    if len(parts) != 2 or parts[1].strip().lower() != email.strip().lower():
+        return None
+    try:
+        return int(parts[0])
+    except ValueError:
         return None
 
 
