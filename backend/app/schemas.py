@@ -29,6 +29,10 @@ class RegisterIn(BaseModel):
     name: str = ""
 
 
+class UpdateMeIn(BaseModel):
+    name: str = ""
+
+
 class UserOut(BaseModel):
     id: int
     email: str

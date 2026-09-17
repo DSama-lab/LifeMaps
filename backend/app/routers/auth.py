@@ -15,6 +15,7 @@ from ..schemas import (
     PasswordLoginIn,
     RegisterIn,
     ResetPasswordIn,
+    UpdateMeIn,
     UserOut,
 )
 from ..security import (
@@ -174,4 +175,17 @@ def reset_password(
 
 @router.get("/me", response_model=UserOut)
 def me(user: User = Depends(get_current_user)):
+    return user
+
+
+@router.put("/me", response_model=UserOut)
+def update_me(
+    body: UpdateMeIn,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    name = (body.name or "").strip()
+    user.name = name[:160]
+    db.commit()
+    db.refresh(user)
     return user
