@@ -137,7 +137,7 @@
   #gmRail{position:absolute;left:8px;top:50%;transform:translateY(-50%);z-index:7;flex-direction:column;gap:5px;
     background:var(--glass2);border:1px solid var(--line);border-radius:14px;padding:6px 5px;backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(0,0,0,.22)}
   #gmRail .rail-btn{border:none;background:none;color:var(--text);display:flex;align-items:center;justify-content:center;gap:5px;
-    width:30px;height:30px;padding:0;border-radius:9px;cursor:pointer;font-family:inherit}
+    width:30px;height:30px;padding:0;border-radius:8px;cursor:pointer;font-family:inherit}
   #gmRail .rail-btn:hover{background:var(--panel,#232936)}
   #gmRail .rail-btn.on{background:var(--accent)}
   #gmRail .rail-btn.on .rail-dot{box-shadow:0 0 0 2px var(--oncolor,#081018)}
@@ -145,17 +145,24 @@
   #gmRail .rail-btn b{display:none}
   @media (min-width:641px){#gmRail .rail-btn{width:auto;justify-content:flex-start;padding:0 7px}
     #gmRail .rail-btn b{display:inline-block;font-size:10.5px;font-weight:800;min-width:15px;text-align:center}}
-  #gmLayers{position:absolute;left:8px;bottom:96px;z-index:7;width:56px;height:56px;border:1px solid var(--line);
-    background:var(--glass2);border-radius:16px;color:var(--text);font-size:25px;display:flex;align-items:center;justify-content:center;
-    cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);backdrop-filter:blur(8px);transition:transform .15s}
+  #gmLayers{position:absolute;left:12px;bottom:14px;z-index:7;width:56px;height:56px;border:1px solid var(--line);
+    background:var(--glass2);border-radius:8px;color:var(--text);font-size:25px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);backdrop-filter:blur(8px);transition:left .24s cubic-bezier(.22,1,.36,1),transform .15s}
   #gmLayers:hover{transform:scale(1.06)}
-  #gmLayersMenu{position:absolute;left:8px;bottom:158px;z-index:30;min-width:220px;background:var(--panel2,#1a1e29);
-    border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:0 14px 40px rgba(0,0,0,.4);color:var(--text)}
+  #gmLayersMenu{position:absolute;left:12px;bottom:140px;z-index:30;min-width:220px;background:var(--panel2,#1a1e29);
+    border:1px solid var(--line);border-radius:8px;padding:10px 12px;box-shadow:0 14px 40px rgba(0,0,0,.4);color:var(--text);transition:left .24s cubic-bezier(.22,1,.36,1)}
   #gmLayersMenu .mg-t{font-size:10px;letter-spacing:.6px;font-weight:800;color:var(--muted);margin:0 0 8px;text-transform:uppercase}
-  #gmDetWrap{position:absolute;left:8px;bottom:14px;z-index:7;flex-direction:row;align-items:center;gap:8px;
-    background:var(--glass2);border:1px solid var(--line);border-radius:12px;padding:6px 10px;backdrop-filter:blur(8px);max-width:min(46vw,420px)}
+  #gmDetWrap{position:absolute;left:12px;bottom:78px;z-index:7;flex-direction:row;align-items:center;gap:8px;
+    background:var(--glass2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;backdrop-filter:blur(8px);max-width:min(46vw,420px);transition:left .24s cubic-bezier(.22,1,.36,1)}
   #gmDetWrap .map-sel{font-size:11.5px;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
-  #mapGear{position:fixed;top:64px;right:14px;min-width:238px;background:var(--bg2,#1a1e29);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:220;max-width:calc(100vw - 32px)}
+  #gmTopBar{position:absolute;top:12px;left:12px;right:12px;z-index:10;display:flex;align-items:center;gap:10px;pointer-events:none;
+    transition:left .24s cubic-bezier(.22,1,.36,1)}
+  #gmTopBar>*{pointer-events:auto}
+  #gmTopBar #chipBar{flex:1 1 auto;min-width:0;max-width:none;overflow-x:auto;scrollbar-width:none;gap:7px;display:flex;align-items:center;padding-bottom:0}
+  #gmTopBar #topSearchWrap{position:relative;flex:0 0 auto;width:min(430px,35vw);max-width:560px;margin-left:auto}
+  body.drawer-open #gmTopBar,body.drawer-open #gmRail,body.drawer-open #gmLayers,body.drawer-open #gmLayersMenu,body.drawer-open #gmDetWrap{
+    left:calc(min(330px,86vw) + 14px)}
+  #mapGear{position:fixed;top:64px;right:14px;min-width:238px;background:var(--bg2,#1a1e29);border:1px solid var(--line);border-radius:8px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:220;max-width:calc(100vw - 32px)}
   .mm-pin{width:27px;height:27px;border-radius:50%;background:var(--pin-bg,#55607a);border:2.5px solid var(--pin-ring,#9ec9ff);color:#fff;
     display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;cursor:pointer;position:relative;
     box-shadow:0 3px 10px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
@@ -182,13 +189,13 @@
   #mapGear label{display:flex;align-items:center;gap:8px;font-size:12px;padding:5px 0;cursor:pointer;color:var(--text)}
   #mapGear input[type=checkbox]{accent-color:var(--accent,#4c9cff);width:15px;height:15px;cursor:pointer}
   #mapGear .mg-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;padding:5px 0;color:var(--text)}
-  #mapGear select{background:var(--glass2);border:1px solid var(--line);border-radius:7px;padding:3px 6px;font-size:11.5px;color:var(--text);font-family:inherit;cursor:pointer;max-width:190px}
+  #mapGear select{background:var(--glass2);border:1px solid var(--line);border-radius:8px;padding:3px 6px;font-size:11.5px;color:var(--text);font-family:inherit;cursor:pointer;max-width:190px}
   #mapGear select:focus{outline:none;border-color:var(--accent)}
   #mapSearchWrap{position:absolute;top:150px;left:14px;z-index:8;width:min(330px,72vw)}
   #mapSearchWrap .ms-in{width:100%;display:flex;gap:6px}
-  #mapSearchWrap input{flex:1;min-width:0;background:var(--glass2);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:12.5px;color:var(--text);font-family:inherit;backdrop-filter:blur(8px)}
+  #mapSearchWrap input{flex:1;min-width:0;background:var(--glass2);border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:12.5px;color:var(--text);font-family:inherit;backdrop-filter:blur(8px)}
   #mapSearchWrap input:focus{outline:none;border-color:var(--accent)}
-  #mapSearchRes{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1px solid var(--line);border-radius:12px;max-height:290px;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.28);display:none;z-index:9}
+  #mapSearchRes{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1px solid var(--line);border-radius:8px;max-height:290px;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.28);display:none;z-index:9}
   #mapSearchRes a{display:flex;gap:8px;padding:9px 11px;color:var(--text);text-decoration:none;border-bottom:1px solid var(--line);font-size:12px;cursor:pointer;align-items:flex-start}
   #mapSearchRes a:last-child{border-bottom:none}
   #mapSearchRes a:hover,#mapSearchRes a.hl{background:var(--panel2,#232936)}
@@ -200,7 +207,7 @@
   #cymap .maplibregl-popup-tip{display:none}
   #cymap .maplibregl-popup{pointer-events:none}
   #cymap .mm-pop .maplibregl-popup-content{pointer-events:auto}
-  .mm-card{width:300px;background:var(--panel2,#232936);border:1px solid var(--line);border-radius:18px;overflow:hidden;color:var(--text);
+  .mm-card{width:300px;background:var(--panel2,#232936);border:1px solid var(--line);border-radius:8px;overflow:hidden;color:var(--text);
     box-shadow:0 18px 44px rgba(0,0,0,.48);font-size:12px;cursor:default;
     transition:width .3s cubic-bezier(.22,1,.36,1), max-height .3s, transform .3s cubic-bezier(.22,1,.36,1), opacity .22s}
   .mm-card .mc-top{position:relative;height:124px;background:linear-gradient(160deg,rgba(66,133,244,.28),rgba(128,90,213,.22));overflow:hidden}
@@ -208,7 +215,7 @@
   .mm-card .mc-top .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;opacity:.95}
   .mm-card .mc-top .phblur{position:absolute;inset:0;backdrop-filter:blur(2px)}
   .mm-card .mc-top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.62))}
-  .mm-card .mc-tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:12px;backdrop-filter:blur(4px);z-index:2}
+  .mm-card .mc-tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:8px;backdrop-filter:blur(4px);z-index:2}
   .mm-card .mc-phloc{position:absolute;left:12px;right:44px;bottom:9px;color:#fff;font-size:11px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}
   .mm-card .mc-body{padding:12px 14px 14px}
   .mm-card h4{margin:0 0 7px;font-size:16px;line-height:1.25;letter-spacing:.1px}
@@ -219,7 +226,7 @@
   .mm-card .mc-loc{color:var(--muted);font-size:11.5px;margin:0 0 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mm-card .mc-mot{color:var(--muted);font-size:12px;line-height:1.55;margin:0 0 11px;display:none}
   .mm-card .mc-cta{display:none;gap:7px}
-  .mm-card .mc-cta button{flex:1;font-size:11.5px;font-weight:700;padding:8px 8px;border-radius:10px;border:none;cursor:pointer}
+  .mm-card .mc-cta button{flex:1;font-size:11.5px;font-weight:700;padding:8px 8px;border-radius:8px;border:none;cursor:pointer}
   .mm-card.full{width:376px}
   .mm-card.full .mc-top{height:178px}
   .mm-card.full .mc-mot{display:block}
@@ -230,10 +237,10 @@
   .mm-card .mc-close{right:10px}
   .mm-card .mc-edit{right:44px;font-size:12px}
   #mapPickBtn.on{background:var(--red,#ff5d73);border-color:var(--red,#ff5d73);color:#fff}
-  #mapItemOverlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(330px,86vw);z-index:9;background:var(--bg2,#171b26);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 16px 44px rgba(0,0,0,.42);color:var(--text);display:none}
+  #mapItemOverlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(330px,86vw);z-index:9;background:var(--bg2,#171b26);border:1px solid var(--line);border-radius:8px;padding:14px;box-shadow:0 16px 44px rgba(0,0,0,.42);color:var(--text);display:none}
   #mapItemOverlay input,#mapItemOverlay select{font-family:inherit}
   #mapDetails{position:absolute;left:14px;bottom:14px;z-index:8;width:300px;max-height:calc(100% - 90px);overflow-y:auto;
-    background:var(--glass2);border:1px solid var(--line);border-radius:12px;padding:14px;backdrop-filter:blur(10px);
+    background:var(--glass2);border:1px solid var(--line);border-radius:8px;padding:14px;backdrop-filter:blur(10px);
     box-shadow:0 8px 30px rgba(0,0,0,.20);color:var(--text);font-size:12.5px}
   #mapDetails h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px}
   #mapDetails .sec{margin:10px 0;padding-top:9px;border-top:1px solid var(--line)}
@@ -246,12 +253,12 @@
   #mapDetails .close{position:absolute;top:8px;right:10px;border:none;background:none;color:var(--muted);font-size:16px;cursor:pointer}
   /* overlay flutuante (XYZ / status) */
   #sceneBar{position:absolute;left:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:8px;
-    background:var(--glass2);padding:8px 12px;border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(8px);font-size:11.5px}
-  #sceneBar .tilt{width:26px;height:26px;border:1px solid var(--line);border-radius:6px;background:var(--panel);
+    background:var(--glass2);padding:8px 12px;border:1px solid var(--line);border-radius:8px;backdrop-filter:blur(8px);font-size:11.5px}
+  #sceneBar .tilt{width:26px;height:26px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
     display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
   #sceneBar .tilt.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--oncolor);border:none}
   #legend{position:absolute;bottom:14px;right:14px;top:auto;left:auto;z-index:5;background:var(--glass2);border:1px solid var(--line);
-    border-radius:10px;padding:10px 12px;font-size:11px;backdrop-filter:blur(8px);color:var(--muted);max-height:44vh;overflow-y:auto}
+    border-radius:8px;padding:10px 12px;font-size:11px;backdrop-filter:blur(8px);color:var(--muted);max-height:44vh;overflow-y:auto}
   #legend .row{display:flex;align-items:center;gap:8px;margin:3px 0}
   #legend .sw{width:12px;height:12px;border-radius:4px;flex:none}
   /* ------- SIDEBAR DIREITA ------- */
@@ -389,12 +396,12 @@
   .gm-burger:hover{background:var(--panel2,var(--glass))}
   .gm-burger:active{transform:scale(.94)}
   #topSearchWrap{position:relative;min-width:0;width:min(430px,30vw);flex:1;max-width:560px;margin-left:2px}
-  #topSearch{width:100%;box-sizing:border-box;padding:9px 34px 9px 13px;border:1px solid var(--line);border-radius:24px;
+  #topSearch{width:100%;box-sizing:border-box;padding:9px 34px 9px 13px;border:1px solid var(--line);border-radius:8px;
     background:var(--panel2,var(--glass2));color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:box-shadow .15s,border-color .15s}
   #topSearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow, rgba(66,133,244,.25))}
   #topSearchRes{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--bg2,#1a1e29);border:1px solid var(--line);
-    border-radius:14px;max-height:340px;overflow-y:auto;box-shadow:0 14px 40px rgba(0,0,0,.32);display:none;z-index:80;padding:6px}
-  #topSearchRes a{display:flex;gap:9px;align-items:center;padding:9px 11px;color:var(--text);text-decoration:none;border-radius:9px;font-size:12.5px;cursor:pointer}
+    border-radius:8px;max-height:340px;overflow-y:auto;box-shadow:0 14px 40px rgba(0,0,0,.32);display:none;z-index:80;padding:6px}
+  #topSearchRes a{display:flex;gap:9px;align-items:center;padding:9px 11px;color:var(--text);text-decoration:none;border-radius:8px;font-size:12.5px;cursor:pointer}
   #topSearchRes a:hover,#topSearchRes a.hl{background:var(--panel2,#232936)}
   #topSearchRes .b{font-weight:600}
   #topSearchRes .s{color:var(--muted);font-size:11px}
@@ -409,7 +416,7 @@
   .av-btn:hover{transform:scale(1.06);box-shadow:0 4px 14px rgba(0,0,0,.3)}
   .av-btn.on{box-shadow:0 0 0 2px var(--green,#21a45d), 0 0 0 5px rgba(33,164,93,.18)}
   #avMenu{position:absolute;top:54px;right:14px;z-index:220;display:none;min-width:250px;background:var(--panel2,#1a1e29);
-    border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 18px 50px rgba(0,0,0,.45);color:var(--text)}
+    border:1px solid var(--line);border-radius:8px;padding:8px;box-shadow:0 18px 50px rgba(0,0,0,.45);color:var(--text)}
   #avMenu.open{display:block;animation:in .18s ease}
   .av-head{display:flex;align-items:center;gap:12px;padding:12px 12px 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
   .av-big{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--oncolor,#fff);
@@ -417,7 +424,7 @@
   .av-head b{font-size:13.5px;display:block;word-break:break-word}
   .av-head span{font-size:11.5px;color:var(--muted);word-break:break-word}
   .av-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:none;background:none;color:var(--text);
-    font-size:12.5px;font-weight:500;cursor:pointer;border-radius:9px;font-family:inherit;text-align:left}
+    font-size:12.5px;font-weight:500;cursor:pointer;border-radius:8px;font-family:inherit;text-align:left}
   .av-item:hover{background:var(--panel,#232936)}
   .av-sep{height:1px;background:var(--line);margin:6px 8px}
   /* drawer lateral (menu hamburger) — espelha a estrutura das seções do Google Maps */
@@ -457,11 +464,12 @@
   .chipb .cn{background:rgba(0,0,0,.16);border-radius:10px;padding:0 7px;font-size:10.5px;min-width:20px;text-align:center}
   .chipb.on .cn{background:rgba(255,255,255,.22)}
   @media (max-width:980px){
-    #topSearchWrap{width:auto;max-width:none;flex:1;min-width:0}
     .spacer{display:none}
     #statusPill{display:none}
-    #chipBar{max-width:none}
     .brand small{display:none}
+    #gmTopBar{flex-wrap:wrap;gap:6px;top:8px;left:8px;right:8px}
+    #gmTopBar #topSearchWrap{flex:0 0 100%;order:1;width:auto;max-width:none;margin-left:0}
+    #gmTopBar #chipBar{flex:1 1 100%;order:2;max-width:none}
   }
   @media (max-width:1200px){#app{--w-left:280px;--w-right:340px}}
   @media (max-width:980px){#app{grid-template-columns:1fr;grid-template-rows:56px auto auto auto;grid-template-areas:none;overflow:auto}
@@ -498,22 +506,8 @@
   <header>
     <button class="gm-burger" id="burgerBtn" onclick="toggleDrawer()" title="Menu · LIFE MAPS" aria-label="Menu">☰</button>
     <div class="brand"><span class="dot"></span>LIFE MAPS<small data-i18n="brand.sub">· plano de mobilidade internacional</small></div>
-    <div id="topSearchWrap">
-      <input id="topSearch" data-i18n-ph="search.ph" placeholder="🔍 Buscar item ou local…" autocomplete="off" oninput="topSearchInput()" onfocus="topSearchInput()">
-      <button class="gm-search-clear" onclick="topSearchClear()" title="Limpar busca">×</button>
-      <div id="topSearchRes"></div>
-    </div>
     <div class="spacer"></div>
     <span id="statusPill"></span>
-    <div id="chipBar">
-      <button class="chipb on" data-st="" onclick="setChipFilter(this)"><span data-i18n="gd.chip.todos">Todos</span> <b class="cn" id="cnAll">0</b></button>
-      <button class="chipb" data-st="ativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--green)"></span><span data-i18n="status.ativo">Ativo</span> <b class="cn" id="cnAtivo">0</b></button>
-      <button class="chipb" data-st="planejado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--blue)"></span><span data-i18n="status.planejado">Planejado</span> <b class="cn" id="cnPlanejado">0</b></button>
-      <button class="chipb" data-st="pendente" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--amber)"></span><span data-i18n="status.pendente">Pendente</span> <b class="cn" id="cnPendente">0</b></button>
-      <button class="chipb" data-st="bloqueado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--red)"></span><span data-i18n="status.bloqueado">Bloqueado</span> <b class="cn" id="cnBloqueado">0</b></button>
-      <button class="chipb" data-st="inativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--muted)"></span><span data-i18n="status.inativo">Inativo</span> <b class="cn" id="cnInativo">0</b></button>
-      <button class="chipb" data-st="concluido" onclick="setChipFilter(this)"><span class="cb-dot" style="background:#e8b64c"></span><span data-i18n="status.concluido">Concluído</span> <b class="cn" id="cnConcluido">0</b></button>
-    </div>
     <button id="avBtn" class="av-btn" onclick="toggleAvMenu()" title="Conta · LIFE MAPS" aria-label="Conta"><span id="avIco">?</span></button>
   </header>
 
@@ -591,6 +585,22 @@
     <div id="cy"></div>
     <div id="cy3d"></div>
     <div id="cymap" style="display:none"><div id="mapPins"></div></div>
+    <div id="gmTopBar" class="gmutil" data-gmdisp="flex" style="display:none">
+      <div id="chipBar">
+        <button class="chipb on" data-st="" onclick="setChipFilter(this)"><span data-i18n="gd.chip.todos">Todos</span> <b class="cn" id="cnAll">0</b></button>
+        <button class="chipb" data-st="ativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--green)"></span><span data-i18n="status.ativo">Ativo</span> <b class="cn" id="cnAtivo">0</b></button>
+        <button class="chipb" data-st="planejado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--blue)"></span><span data-i18n="status.planejado">Planejado</span> <b class="cn" id="cnPlanejado">0</b></button>
+        <button class="chipb" data-st="pendente" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--amber)"></span><span data-i18n="status.pendente">Pendente</span> <b class="cn" id="cnPendente">0</b></button>
+        <button class="chipb" data-st="bloqueado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--red)"></span><span data-i18n="status.bloqueado">Bloqueado</span> <b class="cn" id="cnBloqueado">0</b></button>
+        <button class="chipb" data-st="inativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--muted)"></span><span data-i18n="status.inativo">Inativo</span> <b class="cn" id="cnInativo">0</b></button>
+        <button class="chipb" data-st="concluido" onclick="setChipFilter(this)"><span class="cb-dot" style="background:#e8b64c"></span><span data-i18n="status.concluido">Concluído</span> <b class="cn" id="cnConcluido">0</b></button>
+      </div>
+      <div id="topSearchWrap">
+        <input id="topSearch" data-i18n-ph="search.ph" placeholder="🔍 Buscar item ou local…" autocomplete="off" oninput="topSearchInput()" onfocus="topSearchInput()">
+        <button class="gm-search-clear" onclick="topSearchClear()" title="Limpar busca">×</button>
+        <div id="topSearchRes"></div>
+      </div>
+    </div>
     <div id="gmRail" class="gmutil" data-gmdisp="flex" style="display:none">
       <button class="rail-btn" data-st="" onclick="setChipFilter(this)" title="Todos"><span class="rail-dot" style="background:var(--accent)"></span><b id="rAll">0</b></button>
       <button class="rail-btn" data-st="ativo" onclick="setChipFilter(this)" title="Ativo"><span class="rail-dot" style="background:var(--green)"></span><b id="rAtivo">0</b></button>
@@ -2076,7 +2086,7 @@ function openMap(autoIA){
   const c3=document.getElementById('cy3d');
   m.style.display='block';
   document.querySelectorAll('.gmutil').forEach(el=>{ el.style.display=el.getAttribute('data-gmdisp')||'block'; });
-  const sw=document.getElementById('mapSearchWrap'); if(sw) sw.style.display='block';
+  const sw=document.getElementById('mapSearchWrap'); if(sw) sw.style.display='none';
   // esconde overlays 2D/3D para não conflitar
   document.getElementById('cy').style.display='none';
   c3.style.display='none';
@@ -4954,11 +4964,13 @@ function toggleDrawer(){
   if(d&&d.classList.contains('open')){ closeDrawer(); return; }
   if(d){ d.classList.add('open'); d.setAttribute('aria-hidden','false'); }
   if(s) s.classList.add('on');
+  document.body.classList.add('drawer-open');
 }
 function closeDrawer(){
   const d=document.getElementById('gmDrawer'), s=document.getElementById('gmScrim');
   if(d){ d.classList.remove('open'); d.setAttribute('aria-hidden','true'); }
   if(s) s.classList.remove('on');
+  document.body.classList.remove('drawer-open');
 }
 function drawerGo(fn){ closeDrawer(); try{ fn(); }catch(e){ console.warn('[gm] drawer action',e); } }
 
