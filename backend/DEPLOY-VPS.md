@@ -106,6 +106,27 @@ O `SYNC_API_BASE` do app já decide sozinho: se a página for aberta em `localho
 - Qualquer domínio usado como front deve entrar em `CORS_ORIGINS` no `.env` (reiniciar a api: `docker compose restart api`).
 - Para mudar o host da API manualmente (útil em teste): o dono abre o console do navegador e roda `localStorage.setItem('mv_api_base','https://api.lifemaps.pro')` e recarrega.
 
+### 7.1 Deploy do front via aaPanel (file manager) — passo a passo
+
+**Pré-requisito**: ter o `index.html` atualizado localmente (rodar `node build-demo.js` após cada edição do app).
+
+1. Ler o arquivo local: `LIFEMAPS  PROJECT/index.html` (o app demo, sem credenciais).
+2. Abrir o aaPanel: `https://148.230.78.83:24186` → entrar com as credenciais de login (digitadas na hora).
+3. Menu lateral **Arquivos** → navegar ao site do LifeMaps. O `index.html` fica no docroot do vhost `lifemaps.blackops7.pro` (caminho típico: `/www/wwwroot/lifemaps.blackops7.pro/index.html`).
+4. **Antes de substituir**: criar uma cópia de segurança de segurança do atual:
+   - Clique direito no `index.html` → **Renomear** → `index.html.bak` (ou usar a ferramenta de cópia do painel).
+5. Com o painel na pasta do site:
+   - Clicar **Upload** (botão no topo da lista de arquivos, módulo "Upload de Arquivo").
+   - **Enviar Arquivo** (campo de seleção que abre o file chooser) → escolher o `index.html` local.
+   - Autorizar o envio quando o navegador pedir.
+   - **Confirmar Upload**.
+   - Aparece o diálogo de conflito → escolher **Sobrescrever** (não "renomear"/"pular").
+6. Confirmar que o arquivo novo está no ar: abrir `https://lifemaps.blackops7.pro/index.html?cv=0917` → deve aparecer o gate/login e, após logar, o app com drawer ☰ + busca no topo + chips.
+7. Limpeza (se quiser): remover `index.html.bak` só depois de validar que o novo está OK.
+8. Testar no navegador: login (email+senha e Google), painel, mapa, sync ☁️. Console do navegador deve mostrar só o 401 esperado do probe `/api/auth/me` (se o backend ainda não subiu, é `ERR_CONNECTION_REFUSED` — console limpo no restante).
+
+> **Importante (lição de incidente)**: na API/Ferramentas do aaPanel, o `path` **sempre** deve ser o caminho completo do **arquivo** (`/www/wwwroot/lifemaps.blackops7.pro/index.html`), NUNCA o diretório — deletar com `path` de diretório move a pasta inteira para a Lixeira (site 404).
+
 ## 8. Login Google (opcional — ativa só quando configurado)
 
 1. `console.cloud.google.com` → API & Services → Credentials → **OAuth 2.0 Client ID (Web)**.

@@ -145,21 +145,33 @@
   #gmRail .rail-btn b{display:none}
   @media (min-width:641px){#gmRail .rail-btn{width:auto;justify-content:flex-start;padding:0 7px}
     #gmRail .rail-btn b{display:inline-block;font-size:10.5px;font-weight:800;min-width:15px;text-align:center}}
-  #gmLayers{position:absolute;left:12px;bottom:14px;z-index:7;width:56px;height:56px;border:1px solid var(--line);
-    background:var(--glass2);border-radius:8px;color:var(--text);font-size:25px;display:flex;align-items:center;justify-content:center;
-    cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);backdrop-filter:blur(8px);transition:left .24s cubic-bezier(.22,1,.36,1),transform .15s}
-  #gmLayers:hover{transform:scale(1.06)}
-  #gmLayersMenu{position:absolute;left:12px;bottom:140px;z-index:30;min-width:220px;background:var(--panel2,#1a1e29);
+  #gmLayers{position:absolute;left:12px;bottom:14px;z-index:7;width:66px;height:66px;border:1px solid var(--line);
+    background:var(--glass2);border-radius:10px;color:var(--text);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);backdrop-filter:blur(8px);transition:left .24s cubic-bezier(.22,1,.36,1),transform .15s;overflow:hidden;padding:3px}
+  #gmLayers:hover{transform:scale(1.05)}
+  #gmLayers .th{width:100%;height:100%;border-radius:7px;overflow:hidden;display:block}
+  #gmLayers .th svg{width:100%;height:100%;display:block}
+  #gmLayers::after{content:'';position:absolute;inset:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 -6px 12px rgba(0,0,0,.18);pointer-events:none}
+  #gmLayersMenu{position:absolute;left:12px;bottom:92px;z-index:30;min-width:220px;background:var(--panel2,#1a1e29);
     border:1px solid var(--line);border-radius:8px;padding:10px 12px;box-shadow:0 14px 40px rgba(0,0,0,.4);color:var(--text);transition:left .24s cubic-bezier(.22,1,.36,1)}
   #gmLayersMenu .mg-t{font-size:10px;letter-spacing:.6px;font-weight:800;color:var(--muted);margin:0 0 8px;text-transform:uppercase}
+  #gmLayerCards{display:flex;flex-direction:column;gap:8px}
+  #gmLayerCards .gm-layer-card{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--glass2,#1a1e29);cursor:pointer;transition:background .15s,transform .15s}
+  #gmLayerCards .gm-layer-card:hover{background:rgba(255,255,255,.08)}
+  #gmLayerCards .gm-layer-card.on{background:rgba(80,160,255,.15);border-color:var(--accent)}
+  #gmLayerCards .gm-layer-card .th{width:56px;height:56px;border-radius:8px;flex:0 0 56px;background:#1a1e29;overflow:hidden}
+  #gmLayerCards .gm-layer-card .th svg{width:100%;height:100%;display:block}
+  #gmLayerCards .gm-layer-card .lb{display:flex;flex-direction:column;gap:1px;min-width:0}
+  #gmLayerCards .gm-layer-card .lb span{font-size:11.5px;font-weight:600;color:var(--text);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #gmLayerCards .gm-layer-card .lb .sub{font-size:9px;color:var(--muted);font-weight:400}
   #gmDetWrap{position:absolute;left:12px;bottom:78px;z-index:7;flex-direction:row;align-items:center;gap:8px;
     background:var(--glass2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;backdrop-filter:blur(8px);max-width:min(46vw,420px);transition:left .24s cubic-bezier(.22,1,.36,1)}
   #gmDetWrap .map-sel{font-size:11.5px;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
   #gmTopBar{position:absolute;top:12px;left:12px;right:12px;z-index:10;display:flex;align-items:center;gap:10px;pointer-events:none;
     transition:left .24s cubic-bezier(.22,1,.36,1)}
   #gmTopBar>*{pointer-events:auto}
-  #gmTopBar #chipBar{flex:1 1 auto;min-width:0;max-width:none;overflow-x:auto;scrollbar-width:none;gap:7px;display:flex;align-items:center;padding-bottom:0}
-  #gmTopBar #topSearchWrap{position:relative;flex:0 0 auto;width:min(430px,35vw);max-width:560px;margin-left:auto}
+  #gmTopBar #chipBar{order:2;flex:1 1 auto;min-width:0;max-width:796px;overflow-x:auto;scrollbar-width:none;gap:4px;display:flex;align-items:center;padding-bottom:0;justify-content:left}
+  #gmTopBar #topSearchWrap{order:1;position:relative;flex:0 0 auto;width:min(366px,35vw);max-width:560px;margin-left:0}
   body.drawer-open #gmTopBar,body.drawer-open #gmRail,body.drawer-open #gmLayers,body.drawer-open #gmLayersMenu,body.drawer-open #gmDetWrap{
     left:calc(min(330px,86vw) + 14px)}
   #mapGear{position:fixed;top:64px;right:14px;min-width:238px;background:var(--bg2,#1a1e29);border:1px solid var(--line);border-radius:8px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:220;max-width:calc(100vw - 32px)}
@@ -610,16 +622,26 @@
       <button class="rail-btn" data-st="inativo" onclick="setChipFilter(this)" title="Inativo"><span class="rail-dot" style="background:var(--muted)"></span><b id="rInativo">0</b></button>
       <button class="rail-btn" data-st="concluido" onclick="setChipFilter(this)" title="Concluído"><span class="rail-dot" style="background:#e8b64c"></span><b id="rConcluido">0</b></button>
     </div>
-    <div id="gmLayers" class="gmutil" data-gmdisp="block" style="display:none" onclick="toggleLayersMenu()" title="Camadas do mapa">🛰️</div>
+    <div id="gmLayers" class="gmutil" data-gmdisp="block" style="display:none" onclick="toggleLayersMenu()" title="Camadas do mapa"></div>
     <div id="gmLayersMenu" style="display:none">
-      <div class="mg-t">Camadas</div>
-      <select id="mapStyleSel" class="btn sm" style="padding:6px 8px;width:100%" title="Estilo do mapa" onchange="setMapStyle(this.value)">
-        <option value="real" data-i18n="style.real">🌍 Ruas</option>
-        <option value="escuro" data-i18n="style.escuro">🌙 Escuro</option>
-        <option value="vias" data-i18n="style.vias">🛣️ Vias</option>
-        <option value="politico" data-i18n="style.politico">🗺️ Político</option>
-        <option value="satelite" data-i18n="style.satelite">🛰️ Satélite</option>
-      </select>
+      <div class="mg-t" data-i18n="map.style.t">Camadas</div>
+      <div id="gmLayerCards" class="gm-layer-cards">
+        <button class="gm-layer-card" data-st="real" onclick="setMapStyle('real')">
+          <span class="th" data-th="real"></span><span class="lb"><span data-i18n="style.real">Ruas</span><span class="sub" data-i18n="lyr.padrao">Padrão</span></span>
+        </button>
+        <button class="gm-layer-card" data-st="escuro" onclick="setMapStyle('escuro')">
+          <span class="th" data-th="escuro"></span><span class="lb"><span data-i18n="style.escuro">Noturno</span><span class="sub" data-i18n="lyr.noturno">Noturno</span></span>
+        </button>
+        <button class="gm-layer-card" data-st="vias" onclick="setMapStyle('vias')">
+          <span class="th" data-th="vias"></span><span class="lb"><span data-i18n="style.vias">Vias</span><span class="sub" data-i18n="lyr.transito">Trânsito</span></span>
+        </button>
+        <button class="gm-layer-card" data-st="politico" onclick="setMapStyle('politico')">
+          <span class="th" data-th="politico"></span><span class="lb"><span data-i18n="style.politico">Político</span><span class="sub" data-i18n="lyr.divisoes">Divisões</span></span>
+        </button>
+        <button class="gm-layer-card" data-st="satelite" onclick="setMapStyle('satelite')">
+          <span class="th" data-th="satelite"></span><span class="lb"><span data-i18n="style.satelite">Satélite</span><span class="sub" data-i18n="lyr.imagem">Imagem real</span></span>
+        </button>
+      </div>
     </div>
     <div id="gmDetWrap" class="gmutil" data-gmdisp="flex" style="display:none">
       <span id="mapSelInfo" class="map-sel" style="display:none"></span>
@@ -896,7 +918,8 @@ pt:{
   'cost.total':`Total do item (com pré-requisitos):`,
   'summ.layout':`Auto-layout`,'summ.openmap':`🗺️ Abrir/fechar mapa`,'summ.howto':`❓ Como usar`,
   'map.close':`✕ Fechar mapa`,'map.style.title':`Estilo do mapa`,
-  'style.politico':`🗺️ Político`,'style.vias':`🛣️ Vias`,'style.real':`🌍 Real (ruas)`,'style.satelite':`🛰️ Satélite`,
+  'style.politico':`Político`,'style.vias':`Vias`,'style.real':`Ruas`,'style.satelite':`Satélite`,'style.escuro':`Escuro`,'map.style.t':`Camadas`,
+  'lyr.padrao':`Padrão`,'lyr.noturno':`Noturno`,'lyr.transito':`Trânsito`,'lyr.divisoes':`Divisões`,'lyr.imagem':`Imagem real`,
   'map.onlyactive':`Só ativos`,
   'map.assoc':`🎯 Associar p/ item`,'map.assoc.title':`Associar a região selecionada ao item atual`,
   'map.color.title':`Trocar a cor do país selecionado (se você tiver permissão)`,
@@ -1057,7 +1080,8 @@ en:{
   'cost.total':`Total for this item (with prerequisites):`,
   'summ.layout':`Auto-layout`,'summ.openmap':`🗺️ Open/close map`,'summ.howto':`❓ How to use`,
   'map.close':`✕ Close map`,'map.style.title':`Map style`,
-  'style.politico':`🗺️ Political`,'style.vias':`🛣️ Roads`,'style.real':`🌍 Real (streets)`,'style.satelite':`🛰️ Satellite`,
+  'style.politico':`Political`,'style.vias':`Roads`,'style.real':`Standard`,'style.satelite':`Satellite`,'style.escuro':`Dark`,'map.style.t':`Layers`,
+  'lyr.padrao':`Default`,'lyr.noturno':`Night`,'lyr.transito':`Traffic`,'lyr.divisoes':`Divisions`,'lyr.imagem':`Satellite view`,
   'map.onlyactive':`Only active`,
   'map.assoc':`🎯 Link to item`,'map.assoc.title':`Link the selected region to the current item`,
   'map.color.title':`Change the selected country's color (if you have permission)`,
@@ -2142,10 +2166,12 @@ function initMap(){
       syncMap();
       mmApplyPinMode();
       try{ mmApplyMapTheme(); }catch(e){}
+      applyGmLayersUI();
       // a trajetória precisa do estilo totalmente pronto (loaded()); refaz um pouco depois
       setTimeout(()=>{ try{ if(mapObj&&mapObj.loaded()) drawTrajectory(); }catch(e){} }, 800);
     });
     mapObj.on('move',mmPositionPins);
+    mapObj.on('move',mmClampLateral);
     mapObj.on('moveend',mmPositionPins);
     mapObj.on('resize',()=>{ setTimeout(mmPositionPins,50); });
     mapObj.on('click',(e)=>{
@@ -2201,6 +2227,60 @@ function closeMapGear(){ const g=document.getElementById('mapGear'); if(g) g.sty
 function toggleLayersMenu(){
   const m=document.getElementById('gmLayersMenu'); if(!m) return;
   m.style.display=m.style.display==='block'?'none':'block';
+}
+function gmThumbSt(st){
+  const S=(c)=>'<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'+c+'</svg>';
+  const real='<rect width="100" height="100" rx="10" fill="#f2efe9"/>'
+    +'<path d="M0 62 C20 55 34 70 52 62 L60 70 L78 60 C88 66 95 64 100 66 L100 100 L0 100Z" fill="#a9d9ec"/>'
+    +'<rect x="66" y="16" width="24" height="34" rx="5" fill="#cde8c6"/>'
+    +'<rect x="10" y="12" width="30" height="20" rx="4" fill="#e4dcc8"/>'
+    +'<path d="M0 52 C28 40 40 58 62 46 L100 38" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    +'<path d="M0 52 C28 40 40 58 62 46 L100 38" stroke="#d9a441" stroke-width="1.5" fill="none"/>'
+    +'<path d="M30 100 L24 46 C28 26 46 20 58 30 L70 42" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    +'<circle cx="82" cy="20" r="3" fill="#b8a888"/><circle cx="20" cy="46" r="3" fill="#b8a888"/>';
+  const escuro='<rect width="100" height="100" rx="10" fill="#14171c"/>'
+    +'<path d="M0 62 C20 55 34 70 52 62 L60 70 L78 60 C88 66 95 64 100 66 L100 100 L0 100Z" fill="#1c2a38"/>'
+    +'<rect x="66" y="16" width="24" height="34" rx="5" fill="#1f2e24"/>'
+    +'<path d="M0 52 C28 40 40 58 62 46 L100 38" stroke="#3a3f4a" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    +'<path d="M30 100 L24 46 C28 26 46 20 58 30 L70 42" stroke="#3a3f4a" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    +'<circle cx="82" cy="20" r="3" fill="#5a6373"/><circle cx="20" cy="46" r="3" fill="#5a6373"/>';
+  const vias='<rect width="100" height="100" rx="10" fill="#f6f4ee"/>'
+    +'<path d="M0 62 C20 55 34 70 52 62 L60 70 L78 60 C88 66 95 64 100 66 L100 100 L0 100Z" fill="#bfe0f2"/>'
+    +'<rect x="66" y="16" width="24" height="34" rx="5" fill="#d6ebd1"/>'
+    +'<rect x="10" y="12" width="30" height="20" rx="4" fill="#efe8d8"/>'
+    +'<path d="M0 52 C28 40 40 58 62 46 L100 38" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    +'<path d="M0 52 C28 40 40 58 62 46 L100 38" stroke="#f6b500" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+    +'<path d="M30 100 L24 46 C28 26 46 20 58 30 L70 42" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    +'<path d="M30 100 L24 46 C28 26 46 20 58 30 L70 42" stroke="#f6b500" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+  const politico='<rect width="100" height="100" rx="10" fill="#eef1f6"/>'
+    +'<path d="M0 0 L26 0 L22 30 L40 44 L28 70 L20 62 L10 84 L0 88Z" fill="#f9d8a8"/>'
+    +'<path d="M26 0 L100 0 L100 34 L72 26 L58 44 L40 44 L22 30Z" fill="#d3e5f5"/>'
+    +'<path d="M40 44 L58 44 L72 26 L100 34 L100 100 L62 100 L70 78 L52 84 L28 70 L20 62 L10 84 L0 88 L0 84 L10 84Z" fill="#e7f0d8"/>'
+    +'<path d="M62 100 L70 78 L52 84 L40 100Z" fill="#f4cfcf"/>'
+    +'<g stroke="#71798a" stroke-width="1.4" fill="none"><path d="M26 0 L22 30 L40 44 L28 70 L20 62 L10 84 L0 88"/><path d="M26 0 L100 0 L100 34 L72 26 L58 44"/><path d="M40 44 L58 44 L72 26 L100 34"/><path d="M100 34 L100 100 L62 100 L70 78 L52 84 L28 70"/><path d="M10 84 L10 84"/><path d="M70 78 L62 100 L40 100"/></g>';
+  const satelite='<rect width="100" height="100" rx="10" fill="#12293a"/>'
+    +'<rect x="0" y="0" width="100" height="100" rx="10" fill="#1e3d2e"/>'
+    +'<path d="M0 0 L60 0 L44 26 L78 20 L72 44 L100 34 L100 100 L70 80 L58 100 L20 88 L8 54 L0 60Z" fill="#2d6a44"/>'
+    +'<path d="M0 100 L26 64 L40 100Z" fill="#1e3d2e"/>'
+    +'<path d="M78 0 L100 0 L100 22 L90 8Z" fill="#417a52"/>'
+    +'<path d="M8 54 L20 60 L14 70 L2 66Z" fill="#3f7d5a"/>'
+    +'<path d="M60 20 L70 6 L82 16 Z" fill="#2d6a44"/>'
+    +'<rect x="64" y="52" width="16" height="10" rx="2" fill="#457b58"/>'
+    +'<circle cx="30" cy="44" r="6" fill="#4f8654" opacity=".8"/>'
+    +'<path d="M90 90 Q94 86 98 90 Q94 94 90 90Z" fill="#b9d4c4" opacity=".7"/>'
+    +'<rect x="40" y="12" width="14" height="4" rx="2" fill="#ffffff" opacity=".35"/>'
+    +'<rect x="10" y="72" width="12" height="3" rx="1.5" fill="#ffffff" opacity=".3"/>';
+  const m={real,escuro,vias,politico,satelite};
+  return S((m[st]||real));
+}
+function applyGmLayersUI(){
+  const btn=document.getElementById('gmLayers');
+  if(btn){ btn.innerHTML='<span class="th">'+gmThumbSt(mapMapStyle)+'</span>'; }
+  document.querySelectorAll('#gmLayerCards .gm-layer-card').forEach(card=>{
+    const st=card.getAttribute('data-st');
+    const th=card.querySelector('.th'); if(th) th.innerHTML=gmThumbSt(st);
+    card.classList.toggle('on', st===mapMapStyle);
+  });
 }
 function mapPickFromDrawer(){
   const m=document.getElementById('cymap');
@@ -2485,6 +2565,7 @@ async function setMapStyle(style){
   if(style==='vias') mapStreets=true; else if(style==='politico') mapStreets=false;
   mapMapStyle=MAP_STYLES_OK.includes(style)?style:'real';
   const sel=document.getElementById('mapStyleSel'); if(sel) sel.value=mapMapStyle;
+  applyGmLayersUI();
   const spec=MAP_STYLE_URLS[mapMapStyle];
   const lbl={politico:'Mapa político (sem vias)',vias:'Camada de vias (Carto) ✓',real:'Mapa real — ruas OpenStreetMap ✓',escuro:'Mapa escuro — ruas noturno ✓',satelite:'Vista de satélite real (Esri) ✓'};
   toast(lbl[mapMapStyle]||'Mapa atualizado','ok');
@@ -2666,6 +2747,21 @@ function mmPositionPins(){
     p.e.style.left=pt.x.toFixed(1)+'px';
     p.e.style.top=pt.y.toFixed(1)+'px';
   }
+}
+function mmClampLateral(){
+  if(!mapObj) return;
+  try{
+    const b=mapObj.getBounds();
+    const span=b.getEast()-b.getWest();
+    const c=mapObj.getCenter();
+    if(span>=359.9){
+      if(Math.abs(c.lng)>0.001){ mapObj.jumpTo({center:[0,c.lat],animate:false}); }
+      return;
+    }
+    const half=span/2;
+    const cl=Math.max(-180+half, Math.min(180-half, c.lng));
+    if(Math.abs(cl-c.lng)>0.0001){ mapObj.jumpTo({center:[cl,c.lat],animate:false}); }
+  }catch(e){}
 }
 function shortT(n){
   const t=(n&&n.data&&(n.data('title')||n.id()))||'';
@@ -5131,6 +5227,7 @@ function runBoot(){
   set3DMode(true);
   if(worldHasGeo()) openMap(true);
   applyTheme();
+  applyGmLayersUI();
   const lbtn=document.getElementById('labels3DBtn'); if(lbtn) lbtn.classList.toggle('on',labels3D);
   refreshStatusLbl();
   refreshSubCatLbl();
