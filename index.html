@@ -134,9 +134,28 @@
   #cymap{position:absolute;inset:0;display:none;z-index:2;overscroll-behavior:none}
   #cymap .maplibregl-canvas{cursor:grab}
   #cymap .maplibregl-canvas:active{cursor:grabbing}
-  #mapBar{position:absolute;top:14px;right:14px;z-index:7;display:flex;align-items:center;gap:8px;
-    background:var(--glass2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;backdrop-filter:blur(8px)}
-  #mapBar .map-sel{font-size:11.5px;color:var(--muted);font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #gmRail{position:absolute;left:8px;top:50%;transform:translateY(-50%);z-index:7;flex-direction:column;gap:5px;
+    background:var(--glass2);border:1px solid var(--line);border-radius:14px;padding:6px 5px;backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(0,0,0,.22)}
+  #gmRail .rail-btn{border:none;background:none;color:var(--text);display:flex;align-items:center;justify-content:center;gap:5px;
+    width:30px;height:30px;padding:0;border-radius:9px;cursor:pointer;font-family:inherit}
+  #gmRail .rail-btn:hover{background:var(--panel,#232936)}
+  #gmRail .rail-btn.on{background:var(--accent)}
+  #gmRail .rail-btn.on .rail-dot{box-shadow:0 0 0 2px var(--oncolor,#081018)}
+  #gmRail .rail-btn .rail-dot{width:9px;height:9px;border-radius:50%;flex:none}
+  #gmRail .rail-btn b{display:none}
+  @media (min-width:641px){#gmRail .rail-btn{width:auto;justify-content:flex-start;padding:0 7px}
+    #gmRail .rail-btn b{display:inline-block;font-size:10.5px;font-weight:800;min-width:15px;text-align:center}}
+  #gmLayers{position:absolute;left:8px;bottom:96px;z-index:7;width:56px;height:56px;border:1px solid var(--line);
+    background:var(--glass2);border-radius:16px;color:var(--text);font-size:25px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);backdrop-filter:blur(8px);transition:transform .15s}
+  #gmLayers:hover{transform:scale(1.06)}
+  #gmLayersMenu{position:absolute;left:8px;bottom:158px;z-index:30;min-width:220px;background:var(--panel2,#1a1e29);
+    border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:0 14px 40px rgba(0,0,0,.4);color:var(--text)}
+  #gmLayersMenu .mg-t{font-size:10px;letter-spacing:.6px;font-weight:800;color:var(--muted);margin:0 0 8px;text-transform:uppercase}
+  #gmDetWrap{position:absolute;left:8px;bottom:14px;z-index:7;flex-direction:row;align-items:center;gap:8px;
+    background:var(--glass2);border:1px solid var(--line);border-radius:12px;padding:6px 10px;backdrop-filter:blur(8px);max-width:min(46vw,420px)}
+  #gmDetWrap .map-sel{font-size:11.5px;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+  #mapGear{position:fixed;top:64px;right:14px;min-width:238px;background:var(--bg2,#1a1e29);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:220;max-width:calc(100vw - 32px)}
   .mm-pin{width:27px;height:27px;border-radius:50%;background:var(--pin-bg,#55607a);border:2.5px solid var(--pin-ring,#9ec9ff);color:#fff;
     display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;cursor:pointer;position:relative;
     box-shadow:0 3px 10px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
@@ -159,7 +178,6 @@
   #mapPins .mm-pin.sel{transform:translate(-50%,-50%) scale(1.1)}
   #mapPins .mm-pin.mm-photo:hover{transform:translate(-50%,-100%) scale(1.06)}
   #mapPins .mm-pin.mm-photo.sel{transform:translate(-50%,-100%) scale(1.04);z-index:2}
-  #mapGear{position:absolute;top:calc(100% + 6px);right:0;min-width:238px;background:var(--bg2,#1a1e29);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:20}
   #mapGear .mg-t{font-size:10px;letter-spacing:.6px;font-weight:800;color:var(--muted);margin:2px 0 4px;text-transform:uppercase}
   #mapGear label{display:flex;align-items:center;gap:8px;font-size:12px;padding:5px 0;cursor:pointer;color:var(--text)}
   #mapGear input[type=checkbox]{accent-color:var(--accent,#4c9cff);width:15px;height:15px;cursor:pointer}
@@ -182,32 +200,35 @@
   #cymap .maplibregl-popup-tip{display:none}
   #cymap .maplibregl-popup{pointer-events:none}
   #cymap .mm-pop .maplibregl-popup-content{pointer-events:auto}
-  .mm-card{width:250px;background:linear-gradient(165deg,var(--panel2,#232936),var(--panel,#1a1e29));border:1px solid rgba(255,255,255,.10);border-radius:16px;overflow:hidden;color:var(--text);
+  .mm-card{width:300px;background:var(--panel2,#232936);border:1px solid var(--line);border-radius:18px;overflow:hidden;color:var(--text);
     box-shadow:0 18px 44px rgba(0,0,0,.48);font-size:12px;cursor:default;
     transition:width .3s cubic-bezier(.22,1,.36,1), max-height .3s, transform .3s cubic-bezier(.22,1,.36,1), opacity .22s}
-  .mm-card .mc-top{position:relative;height:96px;background:linear-gradient(135deg,rgba(66,133,244,.18),rgba(128,90,213,.16))}
+  .mm-card .mc-top{position:relative;height:124px;background:linear-gradient(160deg,rgba(66,133,244,.28),rgba(128,90,213,.22));overflow:hidden}
   .mm-card .mc-top img{width:100%;height:100%;object-fit:cover;display:block}
-  .mm-card .mc-top .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:34px;opacity:.9}
+  .mm-card .mc-top .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;opacity:.95}
   .mm-card .mc-top .phblur{position:absolute;inset:0;backdrop-filter:blur(2px)}
-  .mm-card .mc-tag{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:12px;backdrop-filter:blur(4px)}
-  .mm-card .mc-body{padding:10px 12px 12px}
-  .mm-card h4{margin:0 0 6px;font-size:14px;line-height:1.25}
-  .mm-card .mc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
-  .mm-card .chip2{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:11px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .mm-card .mc-top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.62))}
+  .mm-card .mc-tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:12px;backdrop-filter:blur(4px);z-index:2}
+  .mm-card .mc-phloc{position:absolute;left:12px;right:44px;bottom:9px;color:#fff;font-size:11px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}
+  .mm-card .mc-body{padding:12px 14px 14px}
+  .mm-card h4{margin:0 0 7px;font-size:16px;line-height:1.25;letter-spacing:.1px}
+  .mm-card .mc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+  .mm-card .chip2{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
   .mm-card .chip2.on{border-color:currentColor;background:transparent}
   .mm-card .chip2 i{font-style:normal;width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
-  .mm-card .mc-loc{color:var(--muted);font-size:11px;margin:0 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .mm-card .mc-mot{color:var(--muted);font-size:11.5px;line-height:1.5;margin:0 0 10px;display:none}
-  .mm-card .mc-cta{display:none;gap:6px}
-  .mm-card .mc-cta button{flex:1;font-size:11px;font-weight:700;padding:7px 8px;border-radius:9px;border:none;cursor:pointer}
-  .mm-card.full{width:306px}
-  .mm-card.full .mc-top{height:132px}
+  .mm-card .mc-loc{color:var(--muted);font-size:11.5px;margin:0 0 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mm-card .mc-mot{color:var(--muted);font-size:12px;line-height:1.55;margin:0 0 11px;display:none}
+  .mm-card .mc-cta{display:none;gap:7px}
+  .mm-card .mc-cta button{flex:1;font-size:11.5px;font-weight:700;padding:8px 8px;border-radius:10px;border:none;cursor:pointer}
+  .mm-card.full{width:376px}
+  .mm-card.full .mc-top{height:178px}
   .mm-card.full .mc-mot{display:block}
   .mm-card.full .mc-cta{display:flex}
-  .mm-card.full .mc-body{padding:11px 14px 14px}
-  .mm-card.full h4{font-size:15.5px}
-  .mm-card .mc-close{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;border:none;background:rgba(0,0,0,.5);color:#fff;font-size:13px;cursor:pointer;line-height:24px;text-align:center;z-index:2}
-  .mm-card .mc-edit{position:absolute;top:8px;right:34px;width:24px;height:24px;border-radius:50%;border:none;background:rgba(0,0,0,.5);color:#fff;font-size:12px;cursor:pointer;line-height:24px;text-align:center;z-index:2}
+  .mm-card.full .mc-body{padding:14px 16px 16px}
+  .mm-card.full h4{font-size:19px}
+  .mm-card .mc-close,.mm-card .mc-edit{position:absolute;top:10px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:14px;cursor:pointer;line-height:28px;text-align:center;z-index:3;backdrop-filter:blur(3px)}
+  .mm-card .mc-close{right:10px}
+  .mm-card .mc-edit{right:44px;font-size:12px}
   #mapPickBtn.on{background:var(--red,#ff5d73);border-color:var(--red,#ff5d73);color:#fff}
   #mapItemOverlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(330px,86vw);z-index:9;background:var(--bg2,#171b26);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 16px 44px rgba(0,0,0,.42);color:var(--text);display:none}
   #mapItemOverlay input,#mapItemOverlay select{font-family:inherit}
@@ -426,7 +447,7 @@
   .gd-item.gd-sel select{flex:1;max-width:140px;background:var(--glass2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:11.5px;color:var(--text);font-family:inherit;cursor:pointer}
   .gd-item .badge{flex:none;font-size:10px;font-weight:800;background:var(--accent);color:var(--oncolor,#081018);border-radius:12px;padding:2px 8px}
   /* fileira de chips (atalhos de status), como os "Restaurantes · Hotéis · Coisas para fazer" do Google Maps */
-  #chipBar{position:absolute;top:64px;left:14px;z-index:9;display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;max-width:72vw;padding-bottom:2px;scrollbar-width:none}
+  #chipBar{display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;max-width:44vw;padding-bottom:2px;scrollbar-width:none}
   #chipBar::-webkit-scrollbar{display:none}
   .chipb{border:1px solid var(--line);background:var(--glass2);color:var(--text);border-radius:20px;padding:7px 13px;font-size:12px;
     font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;flex:none;backdrop-filter:blur(8px);font-family:inherit;transition:background .15s,border-color .15s,transform .15s}
@@ -439,7 +460,7 @@
     #topSearchWrap{width:auto;max-width:none;flex:1;min-width:0}
     .spacer{display:none}
     #statusPill{display:none}
-    #chipBar{max-width:calc(100vw - 28px)}
+    #chipBar{max-width:none}
     .brand small{display:none}
   }
   @media (max-width:1200px){#app{--w-left:280px;--w-right:340px}}
@@ -484,6 +505,15 @@
     </div>
     <div class="spacer"></div>
     <span id="statusPill"></span>
+    <div id="chipBar">
+      <button class="chipb on" data-st="" onclick="setChipFilter(this)"><span data-i18n="gd.chip.todos">Todos</span> <b class="cn" id="cnAll">0</b></button>
+      <button class="chipb" data-st="ativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--green)"></span><span data-i18n="status.ativo">Ativo</span> <b class="cn" id="cnAtivo">0</b></button>
+      <button class="chipb" data-st="planejado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--blue)"></span><span data-i18n="status.planejado">Planejado</span> <b class="cn" id="cnPlanejado">0</b></button>
+      <button class="chipb" data-st="pendente" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--amber)"></span><span data-i18n="status.pendente">Pendente</span> <b class="cn" id="cnPendente">0</b></button>
+      <button class="chipb" data-st="bloqueado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--red)"></span><span data-i18n="status.bloqueado">Bloqueado</span> <b class="cn" id="cnBloqueado">0</b></button>
+      <button class="chipb" data-st="inativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--muted)"></span><span data-i18n="status.inativo">Inativo</span> <b class="cn" id="cnInativo">0</b></button>
+      <button class="chipb" data-st="concluido" onclick="setChipFilter(this)"><span class="cb-dot" style="background:#e8b64c"></span><span data-i18n="status.concluido">Concluído</span> <b class="cn" id="cnConcluido">0</b></button>
+    </div>
     <button id="avBtn" class="av-btn" onclick="toggleAvMenu()" title="Conta · LIFE MAPS" aria-label="Conta"><span id="avIco">?</span></button>
   </header>
 
@@ -501,6 +531,8 @@
       <button class="gd-item" id="layoutBtn" onclick="drawerGo(runLayout)" data-i18n="btn.layout">Auto-layout</button>
       <button class="gd-item" id="labels3DBtn" onclick="drawerGo(toggleLabels3D)" data-i18n="btn.labels3d">🏷️ Rótulos</button>
       <button class="gd-item" id="reload3DBtn" onclick="drawerGo(reload3D)" style="display:none" data-i18n="btn.reload3d">⟳ Recarregar 3D</button>
+      <button class="gd-item" id="mapPickBtn" onclick="drawerGo(mapPickFromDrawer)" data-i18n="map.pick">➕ Marcar item no mapa</button>
+      <button class="gd-item" id="mapAssocBtn" onclick="drawerGo(assocRegionToNode)" data-i18n="map.assoc">🎯 Associar p/ etapa</button>
 
       <div class="gd-sec" data-i18n="gd.secao.dados">Seus dados</div>
       <button class="gd-item" onclick="drawerGo(function(){switchLeft('summary');})" data-i18n="left.summary">📊 Resumo</button>
@@ -534,6 +566,7 @@
     </div>
     <button class="av-item" onclick="avAction(function(){toggleSyncModal();})">☁️ <span data-i18n="gd.sync">Conta e nuvem</span></button>
     <button class="av-item" onclick="avAction(toggleTheme)"><span id="avThemeIco">☀️</span> <span data-i18n="gd.theme">Tema</span></button>
+    <button class="av-item" id="mapGearBtn" onclick="avAction(toggleMapGear)" data-i18n="gd.mapcfg">⚙️ <span data-i18n="gd.mapcfg">Mapa — gestos e visual</span></button>
     <button class="av-item" onclick="avAction(function(){switchLeft('help');})" data-i18n="gd.help">❓ Ajuda e dicas</button>
     <button class="av-item" onclick="avAction(printPlan)">🖨️ <span data-i18n="gd.print">Imprimir</span></button>
     <div class="av-sep"></div>
@@ -555,48 +588,47 @@
   <div class="split" id="dvL" title="Arraste p/ redimensionar · clique p/ ocultar/mostrar"><button class="grip" id="dvLGrip">⟩</button></div>
 
   <main id="main">
-    <div id="chipBar">
-      <button class="chipb on" data-st="" onclick="setChipFilter(this)"><span data-i18n="gd.chip.todos">Todos</span> <b class="cn" id="cnAll">0</b></button>
-      <button class="chipb" data-st="ativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--green)"></span><span data-i18n="status.ativo">Ativo</span> <b class="cn" id="cnAtivo">0</b></button>
-      <button class="chipb" data-st="planejado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--blue)"></span><span data-i18n="status.planejado">Planejado</span> <b class="cn" id="cnPlanejado">0</b></button>
-      <button class="chipb" data-st="pendente" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--amber)"></span><span data-i18n="status.pendente">Pendente</span> <b class="cn" id="cnPendente">0</b></button>
-      <button class="chipb" data-st="bloqueado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--red)"></span><span data-i18n="status.bloqueado">Bloqueado</span> <b class="cn" id="cnBloqueado">0</b></button>
-      <button class="chipb" data-st="inativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--muted)"></span><span data-i18n="status.inativo">Inativo</span> <b class="cn" id="cnInativo">0</b></button>
-      <button class="chipb" data-st="concluido" onclick="setChipFilter(this)"><span class="cb-dot" style="background:#e8b64c"></span><span data-i18n="status.concluido">Concluído</span> <b class="cn" id="cnConcluido">0</b></button>
-    </div>
     <div id="cy"></div>
     <div id="cy3d"></div>
     <div id="cymap" style="display:none"><div id="mapPins"></div></div>
-    <div id="mapBar" style="display:none">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <select id="mapStyleSel" class="btn sm" style="padding:5px 8px" title="Estilo do mapa" onchange="setMapStyle(this.value)">
+    <div id="gmRail" class="gmutil" data-gmdisp="flex" style="display:none">
+      <button class="rail-btn" data-st="" onclick="setChipFilter(this)" title="Todos"><span class="rail-dot" style="background:var(--accent)"></span><b id="rAll">0</b></button>
+      <button class="rail-btn" data-st="ativo" onclick="setChipFilter(this)" title="Ativo"><span class="rail-dot" style="background:var(--green)"></span><b id="rAtivo">0</b></button>
+      <button class="rail-btn" data-st="planejado" onclick="setChipFilter(this)" title="Planejado"><span class="rail-dot" style="background:var(--blue)"></span><b id="rPlanejado">0</b></button>
+      <button class="rail-btn" data-st="pendente" onclick="setChipFilter(this)" title="Pendente"><span class="rail-dot" style="background:var(--amber)"></span><b id="rPendente">0</b></button>
+      <button class="rail-btn" data-st="bloqueado" onclick="setChipFilter(this)" title="Bloqueado"><span class="rail-dot" style="background:var(--red)"></span><b id="rBloqueado">0</b></button>
+      <button class="rail-btn" data-st="inativo" onclick="setChipFilter(this)" title="Inativo"><span class="rail-dot" style="background:var(--muted)"></span><b id="rInativo">0</b></button>
+      <button class="rail-btn" data-st="concluido" onclick="setChipFilter(this)" title="Concluído"><span class="rail-dot" style="background:#e8b64c"></span><b id="rConcluido">0</b></button>
+    </div>
+    <div id="gmLayers" class="gmutil" data-gmdisp="block" style="display:none" onclick="toggleLayersMenu()" title="Camadas do mapa">🛰️</div>
+    <div id="gmLayersMenu" style="display:none">
+      <div class="mg-t">Camadas</div>
+      <select id="mapStyleSel" class="btn sm" style="padding:6px 8px;width:100%" title="Estilo do mapa" onchange="setMapStyle(this.value)">
         <option value="real" data-i18n="style.real">🌍 Ruas</option>
         <option value="escuro" data-i18n="style.escuro">🌙 Escuro</option>
         <option value="vias" data-i18n="style.vias">🛣️ Vias</option>
         <option value="politico" data-i18n="style.politico">🗺️ Político</option>
         <option value="satelite" data-i18n="style.satelite">🛰️ Satélite</option>
       </select>
-      <label class="btn sm" style="cursor:pointer;display:flex;align-items:center;gap:5px;background:var(--panel2)"><input type="checkbox" id="mapOnlyActive" onchange="syncMap()" style="cursor:pointer"><span data-i18n="map.onlyactive">Só ativos</span></label>
-      <button class="btn sm" id="mapPickBtn" onclick="setMapPick()" title="Clique no mapa para adicionar um item no ponto" data-i18n="map.pick">➕ Marcar item</button>
-      <button class="btn sm" id="mapAssocBtn" onclick="assocRegionToNode()" title="Associar a região selecionada à etapa atual" data-i18n="map.assoc">🎯 Associar p/ etapa</button>
-      <label class="btn sm" style="cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--panel2)" title="Trocar a cor do país selecionado (se você tiver permissão)">🎨 Cor<input type="color" id="mapColorPick" value="#dcd6ff" onchange="setCountryColor(currentMapSelName(), this.value)" style="width:26px;height:24px;padding:0;border:none;background:none;cursor:pointer"></label>
-      <button class="btn sm" id="mapColorLockBtn" onclick="toggleColorLock()" title="Bloquear/desbloquear a troca de cor dos países (oculta o seletor para o usuário final)" data-i18n="map.lock">🔒 Cores</button>
-      <span id="mapSelInfo" class="map-sel"></span>
-      <button class="btn sm" id="mapDetBtn" onclick="toggleMapDetails()" style="display:none" data-i18n="map.details">📍 Detalhes</button>
-      <button class="btn sm" id="mapGearBtn" onclick="toggleMapGear()" title="Configurações do mapa">⚙️</button>
-      <div id="mapGear" style="display:none">
-        <div class="mg-t">Gestos</div>
-        <label title="Dois dedos no touchpad arrastam o mapa em qualquer direção; a pinça (ctrl+scroll) dá zoom"><input type="checkbox" id="mapGest2F" onchange="setGest2F(this.checked)"> 2 dedos = arrastar mapa</label>
-        <div class="mg-row"><span title="Como o arrasto do touchpad se comporta quando &apos;2 dedos&apos; está ligado">Arrasto</span>
-          <select id="mapPanMode" onchange="setGestMode(this.value)" title="Modo de arrasto do touchpad (2 dedos ligado)">
-            <option value="native" selected>Direto (nativo) — V/H/D originais</option>
-            <option value="diag">Sempre diagonal (45°)</option>
-            <option value="diagonly">Só diagonais (ignora V/H)</option>
-          </select></div>
-        <div class="mg-t" style="margin-top:8px">Aparência</div>
-        <label title="Colorir cada país (look mapa-múndi). Os países continuam clicáveis mesmo desligado"><input type="checkbox" id="mapCountryFills" onchange="setCountryFills(this.checked)"> Cores dos países</label>
-      </div>
-      </div>
+    </div>
+    <div id="gmDetWrap" class="gmutil" data-gmdisp="flex" style="display:none">
+      <span id="mapSelInfo" class="map-sel" style="display:none"></span>
+      <button class="btn sm" id="mapDetBtn" style="display:none" onclick="toggleMapDetails()" data-i18n="map.details">📍 Detalhes</button>
+    </div>
+    <div id="mapGear" style="display:none">
+      <div class="mg-t">Gestos</div>
+      <label title="Dois dedos no touchpad arrastam o mapa em qualquer direção; a pinça (ctrl+scroll) dá zoom"><input type="checkbox" id="mapGest2F" onchange="setGest2F(this.checked)"> 2 dedos = arrastar mapa</label>
+      <div class="mg-row"><span title="Como o arrasto do touchpad se comporta quando &apos;2 dedos&apos; está ligado">Arrasto</span>
+        <select id="mapPanMode" onchange="setGestMode(this.value)" title="Modo de arrasto do touchpad (2 dedos ligado)">
+          <option value="native" selected>Direto (nativo) — V/H/D originais</option>
+          <option value="diag">Sempre diagonal (45°)</option>
+          <option value="diagonly">Só diagonais (ignora V/H)</option>
+        </select></div>
+      <div class="mg-t" style="margin-top:8px">Aparência</div>
+      <label title="Colorir cada país (look mapa-múndi). Os países continuam clicáveis mesmo desligado"><input type="checkbox" id="mapCountryFills" onchange="setCountryFills(this.checked)"> Cores dos países</label>
+      <label title="Mostrar apenas os itens com status &quot;ativo&quot; no mapa"><input type="checkbox" id="mapOnlyActive" onchange="syncMap()"> Só ativos no mapa</label>
+      <label title="Trocar a cor do país selecionado (se você tiver permissão)" style="margin-top:6px">🎨 Cor do país<input type="color" id="mapColorPick" value="#dcd6ff" onchange="setCountryColor(currentMapSelName(), this.value)" style="width:34px;height:28px;padding:0;border:none;background:none;cursor:pointer;margin-left:auto"></label>
+      <div class="mg-row"><span>Bloquear troca de cor</span><button class="btn sm" id="mapColorLockBtn" onclick="toggleColorLock()" title="Bloquear/desbloquear a troca de cor dos países" data-i18n="map.lock">🔒</button></div>
     </div>
     <div id="mapSearchWrap" style="display:none">
       <div class="ms-in">
@@ -816,6 +848,7 @@ pt:{
   'gd.menu':`Menu · LIFE MAPS`,'gd.theme':`Tema`,'gd.help':`❓ Ajuda e dicas`,
   'gd.sync':`Conta e nuvem`,'gd.logout':`Sair`,'gd.login':`Entrar / criar conta`,
   'gd.share':`Copiar link do mapa`,'gd.print':`Imprimir`,'gd.lang':`Idioma`,
+  'gd.mapcfg':`Mapa — gestos e visual`,
   'gd.offline':`desconectado`,'gd.chip.todos':`📍 Todos`,
   'gd.secao.plano':`Plano`,'gd.secao.dados':`Seus dados`,'gd.secao.compartilhar':`Compartilhar`,
   'gd.secao.personalizar':`Personalização`,'gd.secao.conta':`Conta`,
@@ -865,7 +898,7 @@ pt:{
   'scene.tilt':`Profundidade 3D (XYZ) — segue o mouse`,'scene.spin':`Girar o mapa (rotação automática)`,
   'scene.z4':`profundidade 3D + girando…`,'scene.z3':`girando o mapa…`,
   'scene.z2':`profundidade: ligada (arraste p/ navegar)`,'scene.z1':`profundidade: desligada`,
-  'tab.no':`Lugar / Item`,'tab.graf':`Grafo`,'tab.ia':`IA`,
+  'tab.no':`Lugares / Itens`,'tab.graf':`Grafo`,'tab.ia':`IA`,
   'right.close':`Ocultar painel direito`,'right.close.t':`Fechar painel direito`,
   'left.close.t':`Ocultar painel esquerdo`,
   'dv.resize':`Arraste p/ redimensionar · clique p/ ocultar/mostrar`,
@@ -976,6 +1009,7 @@ en:{
   'gd.menu':`Menu · LIFE MAPS`,'gd.theme':`Theme`,'gd.help':`❓ Help & tips`,
   'gd.sync':`Account & cloud`,'gd.logout':`Sign out`,'gd.login':`Sign in / create account`,
   'gd.share':`Copy map link`,'gd.print':`Print`,'gd.lang':`Language`,
+  'gd.mapcfg':`Map — gestures & look`,
   'gd.offline':`disconnected`,'gd.chip.todos':`📍 All`,
   'gd.secao.plano':`Plan`,'gd.secao.dados':`Your data`,'gd.secao.compartilhar':`Share`,
   'gd.secao.personalizar':`Personalization`,'gd.secao.conta':`Account`,
@@ -1025,7 +1059,7 @@ en:{
   'scene.tilt':`3D depth (XYZ) — follows the mouse`,'scene.spin':`Rotate the map (auto rotation)`,
   'scene.z4':`3D depth + rotating…`,'scene.z3':`rotating the map…`,
   'scene.z2':`depth: on (drag to navigate)`,'scene.z1':`depth: off`,
-  'tab.no':`Location / Item`,'tab.graf':`Graph`,'tab.ia':`AI`,
+  'tab.no':`Locations / Items`,'tab.graf':`Graph`,'tab.ia':`AI`,
   'right.close':`Hide right panel`,'right.close.t':`Close right panel`,
   'left.close.t':`Hide left panel`,
   'dv.resize':`Drag to resize · click to hide/show`,
@@ -2039,9 +2073,9 @@ function toggleMap(){
 
 function openMap(autoIA){
   const m=document.getElementById('cymap');
-  const bar=document.getElementById('mapBar');
   const c3=document.getElementById('cy3d');
-  m.style.display='block'; bar.style.display='flex';
+  m.style.display='block';
+  document.querySelectorAll('.gmutil').forEach(el=>{ el.style.display=el.getAttribute('data-gmdisp')||'block'; });
   const sw=document.getElementById('mapSearchWrap'); if(sw) sw.style.display='block';
   // esconde overlays 2D/3D para não conflitar
   document.getElementById('cy').style.display='none';
@@ -2059,7 +2093,9 @@ function openMap(autoIA){
 
 function closeMap(){
   document.getElementById('cymap').style.display='none';
-  document.getElementById('mapBar').style.display='none';
+  document.querySelectorAll('.gmutil').forEach(el=>{ el.style.display='none'; });
+  closeMapGear();
+  const lm=document.getElementById('gmLayersMenu'); if(lm) lm.style.display='none';
   const sw=document.getElementById('mapSearchWrap'); if(sw) sw.style.display='none';
   hideMapCard();
   setMapPick(false,true);
@@ -2076,7 +2112,8 @@ function initMap(){
     mapObj=new maplibregl.Map({
       container:'cymap',
       style:MAP_STYLE_URLS[mapMapStyle]||MAP_STYLE_URLS.real,
-      center:[0,20], zoom:1.6,
+      center:[0,20], zoom:2,
+      minZoom:2, maxZoom:21, renderWorldCopies:false,
       attributionControl:true,
       // gestos: arrastar p/ arrastar o mapa em qq direção; zoom só com pinça (touch) ou scroll
       dragPan:true, scrollZoom:true, boxZoom:false, dragRotate:false, pitchWithRotate:false,
@@ -2118,6 +2155,7 @@ function initMap(){
     document.getElementById('mapSearch').addEventListener('input',mapSearchInput);
     document.addEventListener('click',(e)=>{
       const s=document.getElementById('mapSearchRes'); if(s && !e.target.closest('#mapSearchWrap')) s.style.display='none';
+      const lm=document.getElementById('gmLayersMenu'); if(lm && lm.style.display!=='none' && !e.target.closest('#gmLayers, #gmLayersMenu')) lm.style.display='none';
       const g=document.getElementById('mapGear'); if(g && g.style.display!=='none' && !e.target.closest('#mapGear, #mapGearBtn')) g.style.display='none';
     });
   }catch(err){ console.warn('[mm] maplibre init', err); toast('Não foi possível abrir o mapa','err'); }
@@ -2150,6 +2188,15 @@ function toggleMapGear(){
   } else { closeMapGear(); }
 }
 function closeMapGear(){ const g=document.getElementById('mapGear'); if(g) g.style.display='none'; }
+function toggleLayersMenu(){
+  const m=document.getElementById('gmLayersMenu'); if(!m) return;
+  m.style.display=m.style.display==='block'?'none':'block';
+}
+function mapPickFromDrawer(){
+  const m=document.getElementById('cymap');
+  if(!mapObj || (m && m.style.display!=='block')) openMap();
+  setMapPick();
+}
 function setGest2F(on){
   mapGest2F=!!on; setMapPref('mv_gest_2f',mapGest2F);
   toast(mapGest2F?'Touchpad: 2 dedos arrastam o mapa (pinça = zoom) ✓':'Touchpad: comportamento padrão (scroll = zoom) ✓','ok');
@@ -2320,13 +2367,15 @@ function setMapSel(e){
   if(f && f.length){
     const name=f[0].properties && (f[0].properties.name||f[0].properties.NAME||'Região selecionada');
     mapSelFeature={name, geometry:f[0].geometry};
-    document.getElementById('mapSelInfo').textContent='📍 '+name+' (clique num item p/ associar)';
+    const info=document.getElementById('mapSelInfo');
+    if(info){ info.textContent='📍 '+name; info.style.display=''; }
     highlightRegion();
     refreshColorControls();
     renderMapDetails(name);
   } else {
     mapSelFeature=null;
-    document.getElementById('mapSelInfo').textContent='';
+    const info=document.getElementById('mapSelInfo');
+    if(info){ info.textContent=''; info.style.display='none'; }
     clearRegionHighlight();
     renderMapDetails(null);
   }
@@ -2540,7 +2589,8 @@ function mapCardHTML(n, full){
     '</div>';
   return '<div class="mm-card'+(full?' full':'')+'">'+
     '<div class="mc-top">'+(img? '<img src="'+esc(img)+'" alt="" loading="lazy" onerror="mcImgError(this)">' : '<div class="ph"><span class="phblur"></span>'+icon+'</div>')+
-      '<span class="mc-tag">'+cat+'</span>'+(full? '<button class="mc-close" onclick="hideMapCard()" title="Fechar">✕</button><button class="mc-edit" title="Editar no painel" onclick=\'mcEditP(\"'+n.id()+'\")\'>✎</button>':'')+
+      '<span class="mc-tag">'+cat+'</span>'+(full? '<span class="mc-phloc">📍 '+esc(n.data('loc')||'')+'</span>':'')+
+      (full? '<button class="mc-close" onclick="hideMapCard()" title="Fechar">✕</button><button class="mc-edit" title="Editar no painel" onclick=\'mcEditP(\"'+n.id()+'\")\'>✎</button>':'')+
     '</div>'+body+'</div>';
 }
 function mcOpen(id){ const c=cy.getElementById(id); if(c.length){ select(c); hideMapCard(); setTab('etapas'); openRadialMenu(c,null); } }
@@ -4941,6 +4991,7 @@ function updateChips(){
   const cnt={0:0,ativo:0,planejado:0,pendente:0,bloqueado:0,inativo:0,concluido:0};
   try{ if(cy&&cy.nodes){ cy.nodes().forEach(n=>{ const st=n.data('status'); if(st in cnt) cnt[st]++; cnt[0]++; }); } }catch(e){}
   for(const k in ids){ const el=document.getElementById(ids[k]); if(el) el.textContent=cnt[k]; }
+  for(const k in ids){ const r=document.getElementById('r'+ids[k].slice(2)); if(r) r.textContent=cnt[k]; }
   applyChipVis();
 }
 function applyChipVis(){
@@ -4954,6 +5005,7 @@ function setChipFilter(el){
   const st=el? el.getAttribute('data-st') : '';
   chipFilter = (chipFilter===st)? '' : st;
   document.querySelectorAll('#chipBar .chipb').forEach(b=>{ b.classList.toggle('on', b.getAttribute('data-st')===chipFilter); });
+  document.querySelectorAll('#gmRail .rail-btn').forEach(b=>{ b.classList.toggle('on', b.getAttribute('data-st')===chipFilter); });
   applyChipVis();
   toast(chipFilter? (T('gd.chip.on')+T('status.'+chipFilter)) : T('gd.chip.off'),'ok');
 }
