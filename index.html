@@ -321,6 +321,9 @@
   .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px 16px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .15s}
   .google-btn:hover{border-color:var(--accent)}
   .google-btn svg{width:18px;height:18px;flex:none}
+   .gsi-btn-wrap{width:100%;min-height:44px;display:flex;justify-content:center;margin-bottom:4px}
+   .gsi-btn-wrap>div{width:100% !important}
+   .gsi-btn-wrap iframe{width:100% !important;max-width:none !important}
   .auth-field{margin-bottom:10px}
   .auth-field label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px;font-weight:500}
   .auth-field input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--glass2);color:var(--text);font-size:13px;font-family:inherit;box-sizing:border-box}
@@ -359,6 +362,86 @@
   ::-webkit-scrollbar{width:8px;height:8px}
   ::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px}
   ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+  /* ------- CHROME ESTILO GOOGLE MAPS (drawer + avatar + chips + busca + topos) ------- */
+  .gm-burger{border:none;background:none;color:var(--text);font-size:21px;width:40px;height:40px;border-radius:50%;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;line-height:1;padding:0}
+  .gm-burger:hover{background:var(--panel2,var(--glass))}
+  .gm-burger:active{transform:scale(.94)}
+  #topSearchWrap{position:relative;min-width:0;width:min(430px,30vw);flex:1;max-width:560px;margin-left:2px}
+  #topSearch{width:100%;box-sizing:border-box;padding:9px 34px 9px 13px;border:1px solid var(--line);border-radius:24px;
+    background:var(--panel2,var(--glass2));color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:box-shadow .15s,border-color .15s}
+  #topSearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow, rgba(66,133,244,.25))}
+  #topSearchRes{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--bg2,#1a1e29);border:1px solid var(--line);
+    border-radius:14px;max-height:340px;overflow-y:auto;box-shadow:0 14px 40px rgba(0,0,0,.32);display:none;z-index:80;padding:6px}
+  #topSearchRes a{display:flex;gap:9px;align-items:center;padding:9px 11px;color:var(--text);text-decoration:none;border-radius:9px;font-size:12.5px;cursor:pointer}
+  #topSearchRes a:hover,#topSearchRes a.hl{background:var(--panel2,#232936)}
+  #topSearchRes .b{font-weight:600}
+  #topSearchRes .s{color:var(--muted);font-size:11px}
+  #topSearchRes .tag{margin-left:auto;flex:none;font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px}
+  .gm-search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--muted);
+    font-size:15px;cursor:pointer;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .gm-search-clear:hover{color:var(--text);background:var(--panel)}
+  /* avatar da conta (topo direito) — como o ícone do Gmail no Google Maps */
+  .av-btn{width:40px;height:40px;border-radius:50%;border:2px solid var(--accent);background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:var(--oncolor,#fff);font-weight:800;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s;position:relative;font-family:inherit;padding:0;line-height:1}
+  .av-btn:hover{transform:scale(1.06);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  .av-btn.on{box-shadow:0 0 0 2px var(--green,#21a45d), 0 0 0 5px rgba(33,164,93,.18)}
+  #avMenu{position:absolute;top:54px;right:14px;z-index:220;display:none;min-width:250px;background:var(--panel2,#1a1e29);
+    border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 18px 50px rgba(0,0,0,.45);color:var(--text)}
+  #avMenu.open{display:block;animation:in .18s ease}
+  .av-head{display:flex;align-items:center;gap:12px;padding:12px 12px 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+  .av-big{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--oncolor,#fff);
+    font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center;flex:none}
+  .av-head b{font-size:13.5px;display:block;word-break:break-word}
+  .av-head span{font-size:11.5px;color:var(--muted);word-break:break-word}
+  .av-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:none;background:none;color:var(--text);
+    font-size:12.5px;font-weight:500;cursor:pointer;border-radius:9px;font-family:inherit;text-align:left}
+  .av-item:hover{background:var(--panel,#232936)}
+  .av-sep{height:1px;background:var(--line);margin:6px 8px}
+  /* drawer lateral (menu hamburger) — espelha a estrutura das seções do Google Maps */
+  #gmScrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:140;display:none;opacity:0;transition:opacity .2s}
+  #gmScrim.on{display:block;opacity:1}
+  #gmDrawer{position:fixed;top:0;left:0;bottom:0;width:min(330px,86vw);background:var(--bg2,#12151c);z-index:150;
+    border-right:1px solid var(--line);box-shadow:8px 0 34px rgba(0,0,0,.4);transform:translateX(-104%);transition:transform .24s cubic-bezier(.22,1,.36,1);
+    display:flex;flex-direction:column;overflow:hidden}
+  #gmDrawer.open{transform:translateX(0)}
+  .gd-head{display:flex;align-items:center;gap:12px;padding:16px 14px 14px;border-bottom:1px solid var(--line);flex:none}
+  .gd-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--oncolor,#fff);
+    font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none}
+  .gd-me{flex:1;min-width:0}
+  .gd-me b{display:block;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gd-me span{display:block;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
+  .gd-x{border:none;background:none;color:var(--muted);font-size:22px;cursor:pointer;width:32px;height:32px;border-radius:8px;flex:none;line-height:1}
+  .gd-x:hover{color:var(--text);background:var(--panel)}
+  .gd-nav{flex:1;overflow-y:auto;padding:8px 0 16px}
+  .gd-sec{padding:16px 20px 6px;font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+  .gd-sec:first-child{padding-top:10px}
+  .gd-item{display:flex;align-items:center;gap:11px;width:100%;padding:11px 20px;border:none;background:none;color:var(--text);
+    font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;text-align:left;transition:background .12s}
+  .gd-item:hover{background:var(--panel,#232936)}
+  .gd-item.on{background:linear-gradient(90deg,var(--accent,#4c9cff),transparent);color:var(--oncolor,#081018);font-weight:700}
+  .gd-item.gd-sel{align-items:center;gap:8px;cursor:default}
+  .gd-item.gd-sel label{flex:none;color:var(--muted);font-size:12.5px}
+  .gd-item.gd-sel select{flex:1;max-width:140px;background:var(--glass2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:11.5px;color:var(--text);font-family:inherit;cursor:pointer}
+  .gd-item .badge{flex:none;font-size:10px;font-weight:800;background:var(--accent);color:var(--oncolor,#081018);border-radius:12px;padding:2px 8px}
+  /* fileira de chips (atalhos de status), como os "Restaurantes · Hotéis · Coisas para fazer" do Google Maps */
+  #chipBar{position:absolute;top:64px;left:14px;z-index:9;display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;max-width:72vw;padding-bottom:2px;scrollbar-width:none}
+  #chipBar::-webkit-scrollbar{display:none}
+  .chipb{border:1px solid var(--line);background:var(--glass2);color:var(--text);border-radius:20px;padding:7px 13px;font-size:12px;
+    font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;flex:none;backdrop-filter:blur(8px);font-family:inherit;transition:background .15s,border-color .15s,transform .15s}
+  .chipb:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .chipb.on{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:var(--oncolor,#081018)}
+  .chipb .cb-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .chipb .cn{background:rgba(0,0,0,.16);border-radius:10px;padding:0 7px;font-size:10.5px;min-width:20px;text-align:center}
+  .chipb.on .cn{background:rgba(255,255,255,.22)}
+  @media (max-width:980px){
+    #topSearchWrap{width:auto;max-width:none;flex:1;min-width:0}
+    .spacer{display:none}
+    #statusPill{display:none}
+    #chipBar{max-width:calc(100vw - 28px)}
+    .brand small{display:none}
+  }
   @media (max-width:1200px){#app{--w-left:280px;--w-right:340px}}
   @media (max-width:980px){#app{grid-template-columns:1fr;grid-template-rows:56px auto auto auto;grid-template-areas:none;overflow:auto}
     #app>*{grid-area:auto}
@@ -392,24 +475,71 @@
 </div>
 <div id="app">
   <header>
+    <button class="gm-burger" id="burgerBtn" onclick="toggleDrawer()" title="Menu · LIFE MAPS" aria-label="Menu">☰</button>
     <div class="brand"><span class="dot"></span>LIFE MAPS<small data-i18n="brand.sub">· plano de mobilidade internacional</small></div>
+    <div id="topSearchWrap">
+      <input id="topSearch" data-i18n-ph="search.ph" placeholder="🔍 Buscar item ou local…" autocomplete="off" oninput="topSearchInput()" onfocus="topSearchInput()">
+      <button class="gm-search-clear" onclick="topSearchClear()" title="Limpar busca">×</button>
+      <div id="topSearchRes"></div>
+    </div>
     <div class="spacer"></div>
     <span id="statusPill"></span>
-    <select id="langSel" class="btn sm" style="padding:5px 8px;cursor:pointer" onchange="setLang(this.value)" title="Idioma / Language">
-      <option value="pt">🇧🇷 PT</option>
-      <option value="en">🇬🇧 EN</option>
-    </select>
-    <button class="btn" id="syncBtn" onclick="toggleSyncModal()" title="LIFE MAPS Sync — conta / nuvem">☁️</button>
-    <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro">☀️</button>
-    <button class="btn" onclick="saveLocal()" data-i18n="btn.save">Salvar</button>
-    <button class="btn" onclick="exportJSON()" data-i18n="btn.export">Exportar</button>
-    <button class="btn" onclick="openImport()" data-i18n="btn.import">Importar</button>
-    <button class="btn" id="mode3DBtn" onclick="toggle3D()" data-i18n="btn.mode3d">Modo 3D</button>
-    <button class="btn" id="mapBtn" onclick="toggleMap()" data-i18n="btn.map">🗺️ Mapa</button>
-    <button class="btn primary" id="layoutBtn" onclick="runLayout()" data-i18n="btn.layout">Auto-layout</button>
-    <button class="btn" id="reload3DBtn" onclick="reload3D()" style="display:none" data-i18n="btn.reload3d">⟳ Recarregar 3D</button>
-    <button class="btn" id="labels3DBtn" onclick="toggleLabels3D()" data-i18n="btn.labels3d">🏷️ Rótulos</button>
+    <button id="avBtn" class="av-btn" onclick="toggleAvMenu()" title="Conta · LIFE MAPS" aria-label="Conta"><span id="avIco">?</span></button>
   </header>
+
+  <div id="gmScrim" onclick="closeDrawer()"></div>
+  <div id="gmDrawer" aria-hidden="true">
+    <div class="gd-head">
+      <div class="gd-av" id="gdAv">?</div>
+      <div class="gd-me"><b id="gdName">LIFE MAPS</b><span id="gdEmail" data-i18n="gd.offline">desconectado</span></div>
+      <button class="gd-x" onclick="closeDrawer()" title="Fechar menu" aria-label="Fechar menu">&times;</button>
+    </div>
+    <nav class="gd-nav">
+      <div class="gd-sec" data-i18n="gd.secao.plano">Plano</div>
+      <button class="gd-item" id="mapBtn" onclick="drawerGo(toggleMap)" data-i18n="btn.map">🗺️ Mapa</button>
+      <button class="gd-item" id="mode3DBtn" onclick="drawerGo(toggle3D)" data-i18n="btn.mode3d">Modo 3D</button>
+      <button class="gd-item" id="layoutBtn" onclick="drawerGo(runLayout)" data-i18n="btn.layout">Auto-layout</button>
+      <button class="gd-item" id="labels3DBtn" onclick="drawerGo(toggleLabels3D)" data-i18n="btn.labels3d">🏷️ Rótulos</button>
+      <button class="gd-item" id="reload3DBtn" onclick="drawerGo(reload3D)" style="display:none" data-i18n="btn.reload3d">⟳ Recarregar 3D</button>
+
+      <div class="gd-sec" data-i18n="gd.secao.dados">Seus dados</div>
+      <button class="gd-item" onclick="drawerGo(function(){switchLeft('summary');})" data-i18n="left.summary">📊 Resumo</button>
+      <button class="gd-item" onclick="drawerGo(function(){switchLeft('help');})" data-i18n="left.help">❓ Ajuda</button>
+      <button class="gd-item" onclick="drawerGo(saveLocal)" data-i18n="btn.save">Salvar</button>
+      <button class="gd-item" onclick="drawerGo(exportJSON)" data-i18n="btn.export">Exportar</button>
+      <button class="gd-item" onclick="drawerGo(openImport)" data-i18n="btn.import">Importar</button>
+
+      <div class="gd-sec" data-i18n="gd.secao.compartilhar">Compartilhar</div>
+      <button class="gd-item" onclick="drawerGo(copyShareLink)">🔗 <span data-i18n="gd.share">Copiar link do mapa</span></button>
+      <button class="gd-item" onclick="drawerGo(printPlan)">🖨️ <span data-i18n="gd.print">Imprimir</span></button>
+
+      <div class="gd-sec" data-i18n="gd.secao.personalizar">Personalização</div>
+      <button class="gd-item" id="themeBtn" onclick="toggleTheme()">☀️ <span data-i18n="gd.theme">Tema</span></button>
+      <div class="gd-item gd-sel"><label data-i18n="gd.lang">Idioma</label>
+        <select id="langSel" onchange="setLang(this.value)" title="Idioma · Language">
+          <option value="pt">🇧🇷 PT · Português</option>
+          <option value="en">🇬🇧 EN · English</option>
+        </select></div>
+
+      <div class="gd-sec" data-i18n="gd.secao.conta">Conta</div>
+      <button class="gd-item" id="syncBtn" onclick="drawerGo(toggleSyncModal)" title="LIFE MAPS Sync — conta / nuvem">☁️ <span data-i18n="gd.sync">Conta e nuvem</span></button>
+      <button class="gd-item" id="gdLogout" onclick="drawerGo(apiLogoutUI)" style="display:none">🚪 <span data-i18n="gd.logout">Sair</span></button>
+    </nav>
+  </div>
+
+  <div id="avMenu">
+    <div class="av-head">
+      <div class="av-big" id="avMenuIco">?</div>
+      <div><b id="avName">LIFE MAPS</b><span id="avEmail" data-i18n="gd.offline">desconectado</span></div>
+    </div>
+    <button class="av-item" onclick="avAction(function(){toggleSyncModal();})">☁️ <span data-i18n="gd.sync">Conta e nuvem</span></button>
+    <button class="av-item" onclick="avAction(toggleTheme)"><span id="avThemeIco">☀️</span> <span data-i18n="gd.theme">Tema</span></button>
+    <button class="av-item" onclick="avAction(function(){switchLeft('help');})" data-i18n="gd.help">❓ Ajuda e dicas</button>
+    <button class="av-item" onclick="avAction(printPlan)">🖨️ <span data-i18n="gd.print">Imprimir</span></button>
+    <div class="av-sep"></div>
+    <button class="av-item" id="avLogin" onclick="avAction(function(){toggleSyncModal();})">👤 <span data-i18n="gd.login">Entrar / criar conta</span></button>
+    <button class="av-item" id="avLogout" onclick="avAction(apiLogoutUI)" style="display:none">🚪 <span data-i18n="gd.logout">Sair</span></button>
+  </div>
 
   <aside id="left">
     <div class="left-tools">
@@ -425,6 +555,15 @@
   <div class="split" id="dvL" title="Arraste p/ redimensionar · clique p/ ocultar/mostrar"><button class="grip" id="dvLGrip">⟩</button></div>
 
   <main id="main">
+    <div id="chipBar">
+      <button class="chipb on" data-st="" onclick="setChipFilter(this)"><span data-i18n="gd.chip.todos">Todos</span> <b class="cn" id="cnAll">0</b></button>
+      <button class="chipb" data-st="ativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--green)"></span><span data-i18n="status.ativo">Ativo</span> <b class="cn" id="cnAtivo">0</b></button>
+      <button class="chipb" data-st="planejado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--blue)"></span><span data-i18n="status.planejado">Planejado</span> <b class="cn" id="cnPlanejado">0</b></button>
+      <button class="chipb" data-st="pendente" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--amber)"></span><span data-i18n="status.pendente">Pendente</span> <b class="cn" id="cnPendente">0</b></button>
+      <button class="chipb" data-st="bloqueado" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--red)"></span><span data-i18n="status.bloqueado">Bloqueado</span> <b class="cn" id="cnBloqueado">0</b></button>
+      <button class="chipb" data-st="inativo" onclick="setChipFilter(this)"><span class="cb-dot" style="background:var(--muted)"></span><span data-i18n="status.inativo">Inativo</span> <b class="cn" id="cnInativo">0</b></button>
+      <button class="chipb" data-st="concluido" onclick="setChipFilter(this)"><span class="cb-dot" style="background:#e8b64c"></span><span data-i18n="status.concluido">Concluído</span> <b class="cn" id="cnConcluido">0</b></button>
+    </div>
     <div id="cy"></div>
     <div id="cy3d"></div>
     <div id="cymap" style="display:none"><div id="mapPins"></div></div>
@@ -672,6 +811,16 @@ pt:{
   'b.only3d':`Esse botão só funciona no modo 3D`,'b.webglFail':`WebGL indisponível aqui → usando o modo 2D`,
   'b.reloadDone':`Posições 3D recalculadas ✓`,'b.labelsOn':`Rótulos 3D ligados ✓`,'b.labelsOff':`Rótulos 3D ocultos`,
   'btn.theme':`Alternar tema claro/escuro`,
+  'search.ph':`Buscar item ou local…`,
+  'search.none':`Sem resultados`,
+  'gd.menu':`Menu · LIFE MAPS`,'gd.theme':`Tema`,'gd.help':`❓ Ajuda e dicas`,
+  'gd.sync':`Conta e nuvem`,'gd.logout':`Sair`,'gd.login':`Entrar / criar conta`,
+  'gd.share':`Copiar link do mapa`,'gd.print':`Imprimir`,'gd.lang':`Idioma`,
+  'gd.offline':`desconectado`,'gd.chip.todos':`📍 Todos`,
+  'gd.secao.plano':`Plano`,'gd.secao.dados':`Seus dados`,'gd.secao.compartilhar':`Compartilhar`,
+  'gd.secao.personalizar':`Personalização`,'gd.secao.conta':`Conta`,
+  'gd.shareOk':`Link do mapa copiado ✓`,'gd.shareFail':`Não foi possível copiar o link`,'gd.printing':`Abrindo impressão…`,
+  'gd.chip.on':`Filtrando: `,'gd.chip.off':`Filtro removido ✓`,
   'status.ativo':`Ativo`,'status.planejado':`Planejado`,'status.pendente':`Pendente`,
   'status.bloqueado':`Bloqueado`,'status.inativo':`Inativo`,'status.concluido':`Concluído`,
   'left.help':`❓ Ajuda`,'left.summary':`📊 Resumo`,'left.close':`Ocultar painel esquerdo`,
@@ -822,6 +971,16 @@ en:{
   'b.only3d':`This only works in 3D mode`,'b.webglFail':`WebGL unavailable here → using 2D mode`,
   'b.reloadDone':`3D positions recalculated ✓`,'b.labelsOn':`3D labels on ✓`,'b.labelsOff':`3D labels hidden`,
   'btn.theme':`Toggle light/dark theme`,
+  'search.ph':`Search item or place…`,
+  'search.none':`No results`,
+  'gd.menu':`Menu · LIFE MAPS`,'gd.theme':`Theme`,'gd.help':`❓ Help & tips`,
+  'gd.sync':`Account & cloud`,'gd.logout':`Sign out`,'gd.login':`Sign in / create account`,
+  'gd.share':`Copy map link`,'gd.print':`Print`,'gd.lang':`Language`,
+  'gd.offline':`disconnected`,'gd.chip.todos':`📍 All`,
+  'gd.secao.plano':`Plan`,'gd.secao.dados':`Your data`,'gd.secao.compartilhar':`Share`,
+  'gd.secao.personalizar':`Personalization`,'gd.secao.conta':`Account`,
+  'gd.shareOk':`Map link copied ✓`,'gd.shareFail':`Could not copy link`,'gd.printing':`Opening print…`,
+  'gd.chip.on':`Filtering: `,'gd.chip.off':`Filter removed ✓`,
   'status.ativo':`Active`,'status.planejado':`Planned`,'status.pendente':`Pending`,
   'status.bloqueado':`Blocked`,'status.inativo':`Inactive`,'status.concluido':`Completed`,
   'left.help':`❓ Help`,'left.summary':`📊 Summary`,'left.close':`Hide left panel`,
@@ -1804,7 +1963,7 @@ function labelColor(st){
   return st==='bloqueado'?'#c5221f':st==='inativo'?'#9aa0a6':'#3c4043';
 }
 function applyTheme(){
-  document.getElementById('themeBtn').textContent = isDark()?'🌙':'☀️';
+  document.getElementById('themeBtn').textContent = isDark()?'🌙 '+T('gd.theme'):'☀️ '+T('gd.theme');
   if(!fg3d) return;
   try{
     fg3d.backgroundColor(globeBg());
@@ -1970,7 +2129,7 @@ const COUNTRY_COLORS_LOCK_KEY='mm_country_colors_lock';
 let countryColorOverrides=null;
 let countryDataCache=null;
 const MM_PHOTO_ZOOM=2.2;
-let mapGest2F=true, countryFills=true, mapPanMode='native';
+let mapGest2F=true, countryFills=true, mapPanMode='native', chipFilter='';
 let mmPanPending=[0,0], mmPanRaf=null;
 const MAP_WATER_FILL='#81d1e9';      // oceano / lagos (estilo Google Maps)
 const MAP_WATER_LINE='#a9d9ec';      // rios / canais / linhas de água (mais claras)
@@ -2483,6 +2642,7 @@ function syncMap(){
   const nodes=cy.nodes().filter(n=>n.data('loc')&&nodeVisibleOnMap(n));
   nodes.forEach(n=>{
     if(onlyActive && n.data('status')!=='ativo') return;
+    if(chipFilter && n.data('status')!==chipFilter) return;
     const ll=nodeLL(n); if(!ll) return;
     keep[n.id()]=true;
     let p=mapPinEls[n.id()];
@@ -3649,6 +3809,7 @@ function setSyncBtnOn(on,title){
 function updateSyncBtn(){
   const u=(syncState.online&&syncState.user)?syncState.user:null;
   setSyncBtnOn(!!u, u?('LIFE MAPS · '+u.email): T('sync.login'));
+  renderAvatar();
 }
 
 async function apiResolve(doc){
@@ -3707,18 +3868,18 @@ function apiSave(){
 
 async function afterLogin(){
   syncState.online=true;
+  const ready=function(){ return (typeof cy!=='undefined'&&!!cy); };
   const list=await apiDocList();
   if(list&&list.length){
     const meta=list[0];
     syncState.docId=meta.id; syncState.version=meta.version||0;
     try{ localStorage.setItem(SYNC_DOC_KEY,String(meta.id)); }catch(e){}
-    const doc=await apiDocGet(meta.id);
-    await apiResolve(doc);
+    if(ready()){ const doc=await apiDocGet(meta.id); await apiResolve(doc); }
   }else{
     const doc=await apiDocCreate();
     syncState.docId=doc.id; syncState.version=doc.version||0;
     try{ localStorage.setItem(SYNC_DOC_KEY,String(doc.id)); }catch(e){}
-    await apiResolve(doc);
+    if(ready()){ await apiResolve(doc); }
   }
   updateSyncBtn();
 }
@@ -3798,7 +3959,7 @@ function buildSyncModal(){
     h+='<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.title')+'</h3>'+
        '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 16px">'+T('sync.subtitle')+'</p>';
     if(cid){
-      h+='<button class="google-btn" onclick="gsiPrompt()">'+_GOOGLE_SVG+' '+T('sync.googleBtn')+'</button>';
+      h+='<div id="gsiBtnLogin" class="gsi-btn-wrap"></div>';
     }
     h+='<div class="auth-divider">ou</div>'+
        '<div class="auth-field"><label>'+T('sync.email')+'</label><input id="syncEmail" type="email" placeholder="seu@email.com"></div>'+
@@ -3811,6 +3972,7 @@ function buildSyncModal(){
   box.innerHTML=h;
   if(!gateLocked) document.getElementById('modal').classList.add('open');
   const em=document.getElementById('syncEmail'); if(em) em.focus();
+  if(cid) gsiRenderButton('gsiBtnLogin');
 }
 function buildRegisterModal(){
   const box=authBox(); if(!box) return;
@@ -3819,7 +3981,7 @@ function buildRegisterModal(){
   let h=(!gateLocked)?'<button class="modal-close" onclick="authClose()" title="Voltar">&times;</button>':''+
      '<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.registerTitle')+'</h3>'+
      '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 16px">'+T('sync.registerSubtitle')+'</p>'+
-     (cid?('<button class="google-btn" onclick="gsiPrompt()">'+_GOOGLE_SVG+' '+T('sync.googleBtn')+'</button><div class="auth-divider">ou</div>'):'')+
+     (cid?('<div id="gsiBtnReg" class="gsi-btn-wrap"></div><div class="auth-divider">ou</div>'):'')+
      '<div class="auth-field"><label>'+T('sync.name')+'</label><input id="regName" type="text" placeholder="Seu nome"></div>'+
      '<div class="auth-field"><label>'+T('sync.email')+'</label><input id="regEmail" type="email" placeholder="seu@email.com"></div>'+
      '<div class="auth-field"><label>'+T('sync.password')+'</label><input id="regPass" type="password" placeholder="Mín. 8 caracteres" onkeydown="if(event.key===\'Enter\')apiRegisterUI()"></div>'+
@@ -3829,6 +3991,7 @@ function buildRegisterModal(){
   box.innerHTML=h;
   if(!gateLocked) document.getElementById('modal').classList.add('open');
   const em=document.getElementById('regEmail'); if(em) em.focus();
+  if(cid) gsiRenderButton('gsiBtnReg');
 }
 function syncFields(){
   const em=document.getElementById('syncEmail'), pw=document.getElementById('syncPass');
@@ -3932,18 +4095,20 @@ function syncGoogleClientId(){
   try{ const v=localStorage.getItem('mv_google_client_id'); if(v) return v; }catch(e){}
   return (window.LIFEMAPS_GOOGLE_CLIENT_ID||'');
 }
-function gsiPrompt(){
-  const cid=syncGoogleClientId(); if(!cid){ setSyncErr(T('sync.googleLink')); return; }
+function gsiRenderButton(containerId){
+  const cid=syncGoogleClientId(); if(!cid) return;
   function init(){
+    if(!window.google||!window.google.accounts) return;
     window.google.accounts.id.initialize({client_id:cid,callback:resp=>{
       if(resp&&resp.credential) doGoogleLogin(resp.credential); else setSyncErr('Google login falhou');
-    }});
-    window.google.accounts.id.prompt();
+    },});
+    const container=document.getElementById(containerId);
+    if(container) window.google.accounts.id.renderButton(container,{type:'standard',theme:'outline',size:'large',text:'continue_with',width:'100%'});
   }
-  if(window.google&&window.google.accounts){ init(); return; }
+  if(window.google&&window.google.accounts){ setTimeout(init,50); return; }
   const s=document.createElement('script');
   s.src='https://accounts.google.com/gsi/client'; s.async=true; s.defer=true;
-  s.onload=init; s.onerror=function(){ setSyncErr('Não foi possível carregar o Google login'); };
+  s.onload=()=>setTimeout(init,100); s.onerror=function(){ setSyncErr('Não foi possível carregar o Google login'); };
   document.head.appendChild(s);
 }
 async function doGoogleLogin(idToken){
@@ -4725,8 +4890,136 @@ function updatePill(){
     T('status.ativo')+' '+a+' · '+T('status.planejado')+' '+p+' · '+T('status.concluido')+' '+c+
     ' · '+T('status.bloqueado')+' '+b+' · '+T('status.inativo')+' '+i+
     ' <span style="margin-left:8px;color:var(--accent2);font-weight:700">🌍 '+wp.mapped+'/'+wp.total+' '+T('summ.countries')+'</span>';
+  updateChips();
 }
 function fitAndCenter(){ try{ cy.fit(undefined,50); }catch(e){} }
+
+/* =========================================================
+   CHROME ESTILO GOOGLE MAPS (2026-09-16)
+   drawer lateral (hamburger) · avatar da conta (topo direito)
+   · busca no topo · fileira de chips de status
+   ========================================================= */
+function toggleDrawer(){
+  const d=document.getElementById('gmDrawer'), s=document.getElementById('gmScrim');
+  if(d&&d.classList.contains('open')){ closeDrawer(); return; }
+  if(d){ d.classList.add('open'); d.setAttribute('aria-hidden','false'); }
+  if(s) s.classList.add('on');
+}
+function closeDrawer(){
+  const d=document.getElementById('gmDrawer'), s=document.getElementById('gmScrim');
+  if(d){ d.classList.remove('open'); d.setAttribute('aria-hidden','true'); }
+  if(s) s.classList.remove('on');
+}
+function drawerGo(fn){ closeDrawer(); try{ fn(); }catch(e){ console.warn('[gm] drawer action',e); } }
+
+function toggleAvMenu(){
+  const m=document.getElementById('avMenu'); if(!m) return;
+  m.classList.toggle('open');
+}
+function closeAvMenu(){ const m=document.getElementById('avMenu'); if(m) m.classList.remove('open'); }
+function avAction(fn){ closeAvMenu(); try{ fn(); }catch(e){ console.warn('[gm] avatar action',e); } }
+
+function renderAvatar(){
+  const u=(typeof syncState!=='undefined'&&syncState.online&&syncState.user)?syncState.user:null;
+  const initial = u ? (u.name&&u.name[0]? u.name[0] : u.email[0]).toUpperCase() : '?';
+  const email = u? u.email : '';
+  const name = (u&&u.name)? u.name : (u? email : 'LIFE MAPS');
+  const set=(id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('avIco',initial); set('avMenuIco',initial); set('gdAv',initial);
+  set('avName',name.slice(0,40)); set('gdName',name.slice(0,40));
+  set('avEmail',email||T('gd.offline')); set('gdEmail',email||T('gd.offline'));
+  const av=document.getElementById('avBtn'); if(av) av.classList.toggle('on',!!u);
+  const gdLogout=document.getElementById('gdLogout'); if(gdLogout) gdLogout.style.display=u?'flex':'none';
+  const avLogin=document.getElementById('avLogin'); if(avLogin) avLogin.style.display=u?'none':'flex';
+  const avLogout=document.getElementById('avLogout'); if(avLogout) avLogout.style.display=u?'flex':'none';
+  const avThemeIco=document.getElementById('avThemeIco'); if(avThemeIco) avThemeIco.textContent=isDark()?'🌙':'☀️';
+}
+
+/* fileira de chips de status (atalhos: total / ativo / em andamento…) */
+function updateChips(){
+  const ids={0:'cnAll',ativo:'cnAtivo',planejado:'cnPlanejado',pendente:'cnPendente',bloqueado:'cnBloqueado',inativo:'cnInativo',concluido:'cnConcluido'};
+  const cnt={0:0,ativo:0,planejado:0,pendente:0,bloqueado:0,inativo:0,concluido:0};
+  try{ if(cy&&cy.nodes){ cy.nodes().forEach(n=>{ const st=n.data('status'); if(st in cnt) cnt[st]++; cnt[0]++; }); } }catch(e){}
+  for(const k in ids){ const el=document.getElementById(ids[k]); if(el) el.textContent=cnt[k]; }
+  applyChipVis();
+}
+function applyChipVis(){
+  try{
+    if(!cy||!cy.nodes) return;
+    cy.nodes().forEach(n=>{ n.style('opacity', (!chipFilter||n.data('status')===chipFilter)?1:0.22); });
+  }catch(e){}
+  ifMapOpen(()=>{ try{ syncMap(); }catch(e2){ console.warn('[gm] chip sync',e2); } });
+}
+function setChipFilter(el){
+  const st=el? el.getAttribute('data-st') : '';
+  chipFilter = (chipFilter===st)? '' : st;
+  document.querySelectorAll('#chipBar .chipb').forEach(b=>{ b.classList.toggle('on', b.getAttribute('data-st')===chipFilter); });
+  applyChipVis();
+  toast(chipFilter? (T('gd.chip.on')+T('status.'+chipFilter)) : T('gd.chip.off'),'ok');
+}
+
+/* compartilhar / imprimir */
+function copyShareLink(){
+  const url=location.href;
+  const done=()=>toast(T('gd.shareOk'),'ok');
+  const fail=()=>toast(T('gd.shareFail'),'err');
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(done).catch(fail); }
+    else{ const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){ fail(); } ta.remove(); }
+  }catch(e){ fail(); }
+}
+function printPlan(){ toast(T('gd.printing'),'ok'); setTimeout(()=>{ try{ window.print(); }catch(e){} },120); }
+
+/* busca no topo (itens do plano + lugares no mapa) */
+let __topSearchT=null;
+function topSearchHide(){ const r=document.getElementById('topSearchRes'); if(r) r.style.display='none'; }
+function topSearchClear(){ const inp=document.getElementById('topSearch'); if(inp) inp.value=''; topSearchHide(); }
+function topSearchInput(){
+  const inp=document.getElementById('topSearch'), res=document.getElementById('topSearchRes');
+  if(!inp||!res) return;
+  const q=inp.value.trim();
+  if(!q){ topSearchHide(); return; }
+  clearTimeout(__topSearchT);
+  __topSearchT=setTimeout(()=>topSearchRun(q,res),200);
+}
+function topSearchRun(q,res){
+  const ql=q.toLowerCase();
+  const items=[];
+  let mapOpen=false;
+  try{ const m=document.getElementById('cymap'); mapOpen=!!(m&&m.style.display==='block'); }catch(e){}
+  try{
+    cy.nodes().forEach(n=>{
+      const t=String(n.data('title')||n.id());
+      const l=String(n.data('loc')||'');
+      if(!(t.toLowerCase().includes(ql)||l.toLowerCase().includes(ql))) return;
+      items.push({title:t,sub:l||String(n.data('cat')||''),tag:T('status.'+(n.data('status')||''))||n.data('status')||'',
+        go:()=>{ const c=cy.getElementById(n.id()); if(!c||c.empty()) return;
+          if(mapOpen){ const ll=nodeLL(c); select(c); try{ if(ll&&mapObj){ mapFlyTo(ll[0],ll[1],12); mapObj.once('moveend',()=>openMapCard(c,true)); } else openMapCard(c,true); }catch(e){ try{ openMapCard(c,true); }catch(e2){} } }
+          else{ select(c); try{ c.style('opacity',1); }catch(e){} try{ cy.fit(c,70); }catch(e){} }
+        }});
+    });
+  }catch(e){}
+  items.sort((a,b)=>a.title.localeCompare(b.title));
+  const visible=items.slice(0,8);
+  res.innerHTML= visible.length
+    ? visible.map((h,i)=>'<a data-i="'+i+'"><span style="flex:none">📍</span><span style="min-width:0"><span class="b">'+esc(h.title)+'</span><br><span class="s">'+esc(h.sub||'')+'</span></span><span class="tag">'+esc(h.tag)+'</span></a>').join('')
+    : '<a style="cursor:default;color:var(--muted);pointer-events:none"><span data-i18n="search.none">Sem resultados</span></a>';
+  res._items=visible;
+  res.onclick=(ev)=>{
+    const b=ev.target.closest('a'); if(!b||!res._items) return;
+    const i=Number(b.getAttribute('data-i')); const h=res._items[i];
+    if(!h||!h.go) return;
+    topSearchHide(); const inp=document.getElementById('topSearch'); if(inp) inp.value='';
+    h.go();
+  };
+  res.style.display='block';
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest('#avMenu')||e.target.closest('#avBtn')) return; closeAvMenu();
+  if(e.target.closest('#gmDrawer')||e.target.closest('#burgerBtn')) return; closeDrawer();
+  if(!e.target.closest('#topSearchWrap')) topSearchHide();
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDrawer(); closeAvMenu(); topSearchHide(); } });
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
 
@@ -4738,9 +5031,6 @@ function setTab(name){
 document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>setTab(t.dataset.tab); });
 document.getElementById('tiltBtn').addEventListener('click',toggleTilt);
 document.getElementById('spinBtn').addEventListener('click',toggleSpin);
-
-/* botões */
-document.getElementById('layoutBtn').addEventListener('click',runLayout);
 
 /* IA: autosave ao digitar + modelo padrão por provider */
 ['aiKey','aiProvider','aiModel'].forEach(id=>document.getElementById(id).addEventListener('input',autosaveAI));
@@ -4785,6 +5075,7 @@ function runBoot(){
   apiSyncBoot();
 }
 if(MV_REQUIRE_LOGIN){ gateCheck(); } else { runBoot(); }
+renderAvatar();
 
 window.addEventListener('beforeunload',()=>{ try{ localStorage.setItem('mapa_vetorial',JSON.stringify(freezeGraph())); }catch(e){} });
 setInterval(()=>{ try{ if(cy){ localStorage.setItem('mapa_vetorial',JSON.stringify(freezeGraph())); apiSave(); } }catch(e){} },45000);
