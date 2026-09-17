@@ -219,35 +219,49 @@
   #cymap .maplibregl-popup-tip{display:none}
   #cymap .maplibregl-popup{pointer-events:none}
   #cymap .mm-pop .maplibregl-popup-content{pointer-events:auto}
-  .mm-card{width:300px;background:var(--panel2,#232936);border:1px solid var(--line);border-radius:8px;overflow:hidden;color:var(--text);
+  .mm-card{width:300px;background:var(--panel2,#232936);border:1px solid var(--line);border-radius:16px;overflow:hidden;color:var(--text);
     box-shadow:0 18px 44px rgba(0,0,0,.48);font-size:12px;cursor:default;
-    transition:width .3s cubic-bezier(.22,1,.36,1), max-height .3s, transform .3s cubic-bezier(.22,1,.36,1), opacity .22s}
+    transition:width .34s cubic-bezier(.22,1,.36,1), max-height .34s, transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s, opacity .26s;
+    animation:mmCardIn .3s cubic-bezier(.22,1,.36,1)}
+  .mm-card:hover{box-shadow:0 22px 54px rgba(0,0,0,.55)}
+  @keyframes mmCardIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  @keyframes mmspin{to{transform:rotate(360deg)}}
   .mm-card .mc-top{position:relative;height:124px;background:linear-gradient(160deg,rgba(66,133,244,.28),rgba(128,90,213,.22));overflow:hidden}
   .mm-card .mc-top img{width:100%;height:100%;object-fit:cover;display:block}
   .mm-card .mc-top .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;opacity:.95}
   .mm-card .mc-top .phblur{position:absolute;inset:0;backdrop-filter:blur(2px)}
-  .mm-card .mc-top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.62))}
-  .mm-card .mc-tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:8px;backdrop-filter:blur(4px);z-index:2}
-  .mm-card .mc-phloc{position:absolute;left:12px;right:44px;bottom:9px;color:#fff;font-size:11px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}
-  .mm-card .mc-body{padding:12px 14px 14px}
-  .mm-card h4{margin:0 0 7px;font-size:16px;line-height:1.25;letter-spacing:.1px}
-  .mm-card .mc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+  .mm-card .mc-top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.68));pointer-events:none}
+  .mm-card .mc-tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:9px;backdrop-filter:blur(4px);z-index:2}
+  .mm-card .mc-phloc{position:absolute;left:14px;right:46px;bottom:10px;color:#fff;font-size:11.5px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}
+  .mm-card .mc-body{padding:13px 15px 15px}
+  .mm-card h4{margin:0 0 8px;font-size:16px;line-height:1.25;letter-spacing:.1px}
+  .mm-card .mc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
   .mm-card .chip2{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
   .mm-card .chip2.on{border-color:currentColor;background:transparent}
   .mm-card .chip2 i{font-style:normal;width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
-  .mm-card .mc-loc{color:var(--muted);font-size:11.5px;margin:0 0 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mm-card .mc-loc{display:none}
+  .mm-card .mc-sec{display:flex;gap:9px;padding:8px 0;border-top:1px solid var(--line);font-size:12px;line-height:1.5}
+  .mm-card .mc-sec:first-child{border-top:none;padding-top:2px}
+  .mm-card .mc-sec .k{flex:0 0 auto;color:var(--muted);font-weight:700;font-size:10px;letter-spacing:.4px;text-transform:uppercase;min-width:60px;padding-top:2px}
+  .mm-card .mc-sec .v{flex:1;min-width:0;color:var(--text);overflow-wrap:anywhere}
   .mm-card .mc-mot{color:var(--muted);font-size:12px;line-height:1.55;margin:0 0 11px;display:none}
   .mm-card .mc-cta{display:none;gap:7px}
-  .mm-card .mc-cta button{flex:1;font-size:11.5px;font-weight:700;padding:8px 8px;border-radius:8px;border:none;cursor:pointer}
-  .mm-card.full{width:376px}
-  .mm-card.full .mc-top{height:178px}
+  .mm-card .mc-cta button{flex:1;font-size:11.5px;font-weight:700;padding:9px 8px;border-radius:11px;border:none;cursor:pointer}
+  .mm-card.full{width:378px}
+  .mm-card.full .mc-top{height:180px}
   .mm-card.full .mc-mot{display:block}
   .mm-card.full .mc-cta{display:flex}
-  .mm-card.full .mc-body{padding:14px 16px 16px}
+  .mm-card.full .mc-body{padding:15px 17px 17px}
   .mm-card.full h4{font-size:19px}
   .mm-card .mc-close,.mm-card .mc-edit{position:absolute;top:10px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:14px;cursor:pointer;line-height:28px;text-align:center;z-index:3;backdrop-filter:blur(3px)}
   .mm-card .mc-close{right:10px}
   .mm-card .mc-edit{right:44px;font-size:12px}
+  .mm-card .mc-imgbar{position:absolute;right:10px;bottom:10px;display:flex;gap:6px;z-index:3}
+  .mm-card .mc-imgbar button{width:30px;height:30px;border-radius:10px;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.55);color:#fff;font-size:14px;cursor:pointer;line-height:1;backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;transition:transform .16s, background .16s}
+  .mm-card .mc-imgbar button:hover{transform:translateY(-1px);background:rgba(0,0,0,.78)}
+  .mm-card.mm-busy .mc-top::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.42);z-index:4}
+  .mm-card .mc-spin{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:mmspin .8s linear infinite;z-index:5;display:none}
+  .mm-card.mm-busy .mc-spin{display:block}
   #mapPickBtn.on{background:var(--red,#ff5d73);border-color:var(--red,#ff5d73);color:#fff}
   #mapItemOverlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(330px,86vw);z-index:9;background:var(--bg2,#171b26);border:1px solid var(--line);border-radius:8px;padding:14px;box-shadow:0 16px 44px rgba(0,0,0,.42);color:var(--text);display:none}
   #mapItemOverlay input,#mapItemOverlay select{font-family:inherit}
@@ -686,9 +700,7 @@
       <div class="row"><span class="sw" style="background:#ff5d73;height:2px;border-radius:0"></span><span data-i18n="legend.cond">Aresta: condição (se→então)</span></div>
     </div>
     <div id="sceneBar">
-      <div class="tilt" id="tiltBtn" title="Profundidade 3D (XYZ) — segue o mouse">⟲</div>
       <div class="tilt" id="spinBtn" title="Girar o mapa (rotação automática)">⟳</div>
-      <span id="zLabel">profundidade: desligada</span>
     </div>
     <div class="cy-tip" id="cyTooltip"></div>
   </main>
@@ -893,7 +905,7 @@ pt:{
   'help.body':`<div class="help-head"><h3>Como usar</h3><button class="ctl x" id="helpCloseBtn" onclick="switchLeft('summary')" title="Fechar aviso e ver o resumo">✕</button></div>
 <div>Clique num <b style="color:var(--text)">item</b> (quadrado — cada item é um ponto do plano) para ver/editar seus detalhes no painel direito. Passe o cursor para ler a <b style="color:var(--text)">descrição</b>.</div>
 <div>Arraste o item para reposicionar. Role para <b style="color:var(--text)">zoom</b>, arraste o fundo para <b style="color:var(--text)">pan</b>.</div>
-<div>No canto inferior: <b style="color:var(--text)">⟲</b> liga a profundidade 3D (segue o mouse) e <b style="color:var(--text)">⟳</b> faz o mapa <b style="color:var(--text)">girar</b> sozinho.</div>
+<div>No canto inferior: <b style="color:var(--text)">⟳</b> faz o mapa <b style="color:var(--text)">girar</b> sozinho.</div>
 <div><b style="color:var(--text)">Ctrl+clique</b> num item e arraste até outro para criar uma <b style="color:var(--text)">dependência</b> (seta).</div>
 <div><b style="color:var(--text)">Delete</b> remove item/aresta selecionados.</div>
 <h3>Dependências condicionais</h3>
@@ -928,9 +940,7 @@ pt:{
   'legend.ativo':`Ativo`,'legend.planejado':`Planejado`,'legend.pendente':`Pendente`,
   'legend.bloqueado':`Bloqueado`,'legend.inativo':`Inativo`,'legend.concluido':`Concluído`,
   'legend.prereq':`Aresta: pré-requisito`,'legend.cond':`Aresta: condição (se→então)`,
-  'scene.tilt':`Profundidade 3D (XYZ) — segue o mouse`,'scene.spin':`Girar o mapa (rotação automática)`,
-  'scene.z4':`profundidade 3D + girando…`,'scene.z3':`girando o mapa…`,
-  'scene.z2':`profundidade: ligada (arraste p/ navegar)`,'scene.z1':`profundidade: desligada`,
+  'scene.spin':`Girar o mapa (rotação automática)`,
   'tab.no':`Lugares / Itens`,'tab.graf':`Grafo`,'tab.ia':`IA`,
   'right.close':`Ocultar painel direito`,'right.close.t':`Fechar painel direito`,
   'left.close.t':`Ocultar painel esquerdo`,
@@ -999,6 +1009,14 @@ pt:{
   'items.qreqs':`gerar itens de requisito?`,
   'items.insertBtn':`✅ Inserir selecionados`,
   'items.editHint':`toque num item para editar antes de inserir`,
+  'items.invalid':`inválido`,
+  'items.invalidHint':`Faltam dados obrigatórios (local é o principal). Edite ou marque para inserir mesmo assim.`,
+  'mc.local':`Local`,
+  'mc.type':`Tipo`,
+  'mc.reason':`Motivo`,
+  'mc.genImg':`Gerar imagem com IA`,
+  'mc.upImg':`Enviar imagem`,
+  'mc.delImg':`Remover imagem`,
   'toast.itemsdone':`Itens inseridos ✓`,
   'reqInfo.title':`Requisito`,
   'reqInfo.flightBtn':`🔎 Buscar preço real (abrir busca)`,
@@ -1055,7 +1073,7 @@ en:{
   'help.body':`<div class="help-head"><h3>How to use</h3><button class="ctl x" id="helpCloseBtn" onclick="switchLeft('summary')" title="Close notice and see summary">✕</button></div>
 <div>Click an <b style="color:var(--text)">item</b> (square — each item is a plan point) to view/edit its details in the right panel. Hover to read the <b style="color:var(--text)">description</b>.</div>
 <div>Drag an item to reposition it. Scroll to <b style="color:var(--text)">zoom</b>, drag the background to <b style="color:var(--text)">pan</b>.</div>
-<div>Bottom corner: <b style="color:var(--text)">⟲</b> enables 3D depth (follows the mouse) and <b style="color:var(--text)">⟳</b> makes the map <b style="color:var(--text)">rotate</b> by itself.</div>
+<div>Bottom corner: <b style="color:var(--text)">⟳</b> makes the map <b style="color:var(--text)">rotate</b> by itself.</div>
 <div><b style="color:var(--text)">Ctrl+click</b> an item and drag to another to create a <b style="color:var(--text)">dependency</b> (arrow).</div>
 <div><b style="color:var(--text)">Delete</b> removes the selected item/edge.</div>
 <h3>Conditional dependencies</h3>
@@ -1090,9 +1108,7 @@ en:{
   'legend.ativo':`Active`,'legend.planejado':`Planned`,'legend.pendente':`Pending`,
   'legend.bloqueado':`Blocked`,'legend.inativo':`Inactive`,'legend.concluido':`Completed`,
   'legend.prereq':`Edge: prerequisite`,'legend.cond':`Edge: condition (if→then)`,
-  'scene.tilt':`3D depth (XYZ) — follows the mouse`,'scene.spin':`Rotate the map (auto rotation)`,
-  'scene.z4':`3D depth + rotating…`,'scene.z3':`rotating the map…`,
-  'scene.z2':`depth: on (drag to navigate)`,'scene.z1':`depth: off`,
+  'scene.spin':`Rotate the map (auto rotation)`,
   'tab.no':`Locations / Items`,'tab.graf':`Graph`,'tab.ia':`AI`,
   'right.close':`Hide right panel`,'right.close.t':`Close right panel`,
   'left.close.t':`Hide left panel`,
@@ -1161,6 +1177,14 @@ en:{
   'items.qreqs':`generate requirement items?`,
   'items.insertBtn':`✅ Insert selected`,
   'items.editHint':`tap an item to edit before inserting`,
+  'items.invalid':`invalid`,
+  'items.invalidHint':`Missing required data (location is the main one). Edit it or check it to insert anyway.`,
+  'mc.local':`Location`,
+  'mc.type':`Type`,
+  'mc.reason':`Reason`,
+  'mc.genImg':`Generate image with AI`,
+  'mc.upImg':`Upload image`,
+  'mc.delImg':`Remove image`,
   'toast.itemsdone':`Items inserted ✓`,
   'reqInfo.title':`Requirement`,
   'reqInfo.flightBtn':`🔎 Search real price (open search)`,
@@ -1211,6 +1235,10 @@ Object.assign(I18N.pt,{
   'sync.closed':`Fechar`,
   'sync.okUp':`Plano enviado para a nuvem ✓`,
   'sync.okDown':`Plano baixado da nuvem ✓`,
+  'sync.nameTitle':`Como quer ser chamado(a)?`,
+  'sync.nameSubtitle':`Defina seu nome de usuário`,
+  'sync.nameSave':`Salvar nome`,
+  'sync.nameSaved':`Nome atualizado ✓`,
   'gate.subtitle':`acesso protegido — faça login para abrir o app`,
 });
 Object.assign(I18N.en,{
@@ -1271,7 +1299,6 @@ function applyLang(){
   const ls=document.getElementById('langSel'); if(ls) ls.value=_lang;
   refreshStatusLbl();
   refreshSubCatLbl();
-  if(typeof updateSceneLabel==='function') updateSceneLabel();
   if(typeof updatePill==='function') updatePill();
   const sc=document.getElementById('summCtx');
   if(sc && sc.style.display!=='none' && typeof updateSummary==='function') updateSummary();
@@ -1328,6 +1355,8 @@ const GEO = {  // local normalizado -> [lat, lng]
   'africa do sul':[-30.56,22.94],
   // --- Polônia cidades úteis ---
   'polonia':[51.92,19.15], 'breslavia':[51.11,17.03], 'wroclaw':[51.11,17.03],
+  // --- Cáucaso (vaga Armênia) ---
+  'armenia':[40.07,45.04], 'yerevan':[40.18,44.51], 'erevan':[40.18,44.51],
 };
 
 /* ---------- MOEDAS / CÂMBIO (REST sem chave + cache) ---------- */
@@ -1465,8 +1494,59 @@ function getLocLL(loc){
   const k=normLoc(loc);
   if(!k) return null;
   if(GEO[k]) return GEO[k];
+  if(GEO_DYN[k]) return GEO_DYN[k];
   const sub=Object.keys(GEO).find(ky=>k.includes(ky)||ky.includes(k));
-  return sub? GEO[sub] : null;
+  if(sub) return GEO[sub];
+  const sub2=Object.keys(GEO_DYN).find(ky=>k.includes(ky)||ky.includes(k));
+  return sub2? GEO_DYN[sub2] : null;
+}
+
+/* Locais resolvidos em runtime (geocodificação Nominatim) — cache em memória + localStorage */
+const GEO_DYN={};
+const GEO_FAILED={};
+try{ Object.assign(GEO_DYN, JSON.parse(localStorage.getItem('mv_geo_dyn')||'{}')||{}); }catch(e){}
+function geoSaveDyn(){ try{ localStorage.setItem('mv_geo_dyn', JSON.stringify(GEO_DYN)); }catch(e){} }
+async function geocodeLoc(loc){
+  const raw=String(loc||'').trim(); const k=normLoc(raw);
+  if(!k||k.length<3) return null;
+  if(GEO[k]||GEO_DYN[k]) return getLocLL(raw);
+  if(GEO_FAILED[k]) return null;
+  try{
+    const r=await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q='+encodeURIComponent(raw),{headers:{'Accept':'application/json'}});
+    const j=await r.json();
+    if(j&&j.length&&j[0].lat!=null){
+      GEO_DYN[k]=[parseFloat(j[0].lat),parseFloat(j[0].lon)];
+      geoSaveDyn();
+      return GEO_DYN[k];
+    }
+  }catch(e){}
+  GEO_FAILED[k]=true;
+  return null;
+}
+let _geoBusy=false;
+async function geocodeMissingLocs(){
+  if(_geoBusy||!mapObj) return;
+  try{
+    const pend=cy.nodes().filter(n=>{
+      if(!nodeVisibleOnMap(n)) return false;
+      if(nodeLL(n)) return false;
+      return !!(n.data('loc')||autoSuggestLoc(n));
+    });
+    if(!pend.length) return;
+    _geoBusy=true;
+    let changed=false;
+    for(let i=0;i<pend.length;i++){
+      const n=pend[i];
+      let loc=n.data('loc');
+      if(!loc){ const s=autoSuggestLoc(n); if(s){ n.data('loc',s); loc=s; } }
+      if(!loc) continue;
+      const ll=await geocodeLoc(loc);
+      if(ll){ try{ n.data('latll',ll); }catch(e){} changed=true; }
+      if(i<pend.length-1) await new Promise(r=>setTimeout(r,1100));
+    }
+    _geoBusy=false;
+    if(changed){ syncMap(); sync3D(); updatePill(); }
+  }catch(e){ _geoBusy=false; }
 }
 
 /* ---------- GRAFO INICIAL (importado do plano) ---------- */
@@ -1582,7 +1662,7 @@ function seedEdges(){
 /* =========================================================
    CYTOSCAPE SETUP
    ========================================================= */
-let cy, selected=null, tiltOn=false, spinOn=false, spinAngle=0, spinRaf=null, lastDX=0, lastDY=0, draggingAny=false, hoverNode2D=null, GLOBAL=null, pathArr=[];
+let cy, selected=null, spinOn=false, spinAngle=0, spinRaf=null, draggingAny=false, hoverNode2D=null, GLOBAL=null, pathArr=[];
 const FONT='"Inter",sans-serif';
 
 function nodeStyle(node){
@@ -1992,7 +2072,6 @@ function set3DMode(on){
   const c3=document.getElementById('cy3d');
   const r3=document.getElementById('reload3DBtn');
   if(mode3d){
-    if(tiltOn) toggleTilt();
     if(spinOn) toggleSpin();
     btn.classList.add('on');
     syncMode3DBtn();
@@ -2617,9 +2696,20 @@ function nodeTypeLabel(n){
   const map={hotel:'Hotel',estadia:'Hospedagem',trabalho:'Trabalho',empresa:'Empresa',morar:'Moradia',passeio:'Passeio',comer:'Alimentação',transporte:'Transporte',outro:'Item',aeroporto:'Aeroporto',embaixada:'Embaixada',banco:'Banco',doc:'Documento',pessoa:'Contato',agencia:'Agência',curso:'Curso',canal:'Canal',site:'Site',lugar:'Lugar',emprego:'Emprego',valor:'Info',info:'Info'};
   return map[pt]||'Item';
 }
+function validLL(ll){
+  // coordenadas válidas p/ o mapa-múndi: descarta NaN, fora de escala e "null island" (0,0) no oceano
+  if(!ll||ll.length!==2) return false;
+  const lat=Number(ll[0]), lng=Number(ll[1]);
+  if(!isFinite(lat)||!isFinite(lng)) return false;
+  if(Math.abs(lat)>85.06||Math.abs(lng)>180) return false;
+  if(Math.abs(lat)<0.0001&&Math.abs(lng)<0.0001) return false;
+  return true;
+}
 function nodeLL(n){
   const ll=n&&n.data&&n.data('latll');
-  return ll&&ll.length===2? ll : getLocLL(n.data('loc'));
+  if(validLL(ll)) return ll;
+  const g=getLocLL(n.data('loc'));
+  return validLL(g)? g : null;
 }
 function nodeImg(n){
   if(!n||!n.data) return null;
@@ -2667,6 +2757,12 @@ function mapCardHTML(n, full){
   const st=n.data('status')||'planejado';
   const sc=STATUS_COLOR[st]||'#4aa8ff';
   const sl=esc(STATUS_LBL[st]||st);
+  const loc=String(n.data('loc')||'');
+  const mid=n.id();
+  const hasImg=!!(n.data('img')||n.data('imgAuto'));
+  const secs='<div class="mc-sec"><span class="k">'+T('mc.local')+'</span><span class="v">📍 '+esc(loc||'—')+'</span></div>'+
+    '<div class="mc-sec"><span class="k">'+T('mc.type')+'</span><span class="v">'+icon+' '+esc(nodeTypeLabel(n))+'</span></div>'+
+    (full&&cardMotivo(n)?('<div class="mc-sec"><span class="k">'+T('mc.reason')+'</span><span class="v">'+esc(cardMotivo(n))+'</span></div>'):'');
   const body=
     '<div class="mc-body"><h4>'+t+'</h4>'+
     '<div class="mc-chips">'+
@@ -2674,15 +2770,123 @@ function mapCardHTML(n, full){
       '<span class="chip2 on" style="color:'+sc+'"><i style="background:'+sc+'"></i>'+sl+'</span>'+
       impactChip(n)+custoChip(n)+lineChip(n)+
     '</div>'+
-    '<p class="mc-loc">📍 '+esc(n.data('loc')||'')+'</p>'+
+    '<div class="mc-secs">'+secs+'</div>'+
+    '<p class="mc-loc">📍 '+esc(loc)+'</p>'+
     (full? '<div class="mc-mot">'+esc(cardMotivo(n))+'</div>':'')+
-    (full? '<div class="mc-cta"><button style="background:var(--accent);color:var(--oncolor)" onclick=\'mcOpen(\"'+n.id()+'\")\'>Ver no painel</button><button style="background:rgba(255,255,255,.12);color:var(--text)" onclick=\'mcEditP(\"'+n.id()+'\")\'>Editar</button></div>':'')+
+    (full? '<div class="mc-cta"><button style="background:var(--accent);color:var(--oncolor)" onclick=\'mcOpen(\"'+mid+'\")\'>Ver no painel</button><button style="background:rgba(255,255,255,.12);color:var(--text)" onclick=\'mcEditP(\"'+mid+'\")\'>Editar</button></div>':'')+
     '</div>';
+  const imgbar=full?('<div class="mc-imgbar">'+
+      '<button title="'+T('mc.genImg')+'" onclick=\'mcGenImg(\"'+mid+'\")\'>🪄</button>'+
+      '<button title="'+T('mc.upImg')+'" onclick=\'mcUploadImg(\"'+mid+'\")\'>🖼️</button>'+
+      (hasImg?('<button title="'+T('mc.delImg')+'" onclick=\'mcDelImg(\"'+mid+'\")\'>🗑️</button>'):'')+
+    '</div>'):'';
   return '<div class="mm-card'+(full?' full':'')+'">'+
     '<div class="mc-top">'+(img? '<img src="'+esc(img)+'" alt="" loading="lazy" onerror="mcImgError(this)">' : '<div class="ph"><span class="phblur"></span>'+icon+'</div>')+
-      '<span class="mc-tag">'+cat+'</span>'+(full? '<span class="mc-phloc">📍 '+esc(n.data('loc')||'')+'</span>':'')+
-      (full? '<button class="mc-close" onclick="hideMapCard()" title="Fechar">✕</button><button class="mc-edit" title="Editar no painel" onclick=\'mcEditP(\"'+n.id()+'\")\'>✎</button>':'')+
+      '<span class="mc-tag">'+cat+'</span>'+(full? '<span class="mc-phloc">📍 '+esc(loc)+'</span>':'')+
+      (full? '<button class="mc-close" onclick="hideMapCard()" title="Fechar">✕</button><button class="mc-edit" title="Editar no painel" onclick=\'mcEditP(\"'+mid+'\")\'>✎</button>':'')+
+      imgbar+'<span class="mc-spin"></span>'+
     '</div>'+body+'</div>';
+}
+function mcSetBusy(nodeId,busy){
+  if(!mapCardState||mapCardState.nodeId!==nodeId) return;
+  const dom=mapCardState.pop&&mapCardState.pop.getElement&&mapCardState.pop.getElement();
+  const card=dom&&dom.querySelector&&dom.querySelector('.mm-card');
+  if(card) card.classList.toggle('mm-busy',!!busy);
+}
+function mcRefreshCard(nodeId){
+  if(!mapCardState||mapCardState.nodeId!==nodeId) return;
+  const n=cy.getElementById(nodeId); if(!n.length) return;
+  const dom=mapCardState.pop&&mapCardState.pop.getElement&&mapCardState.pop.getElement();
+  if(!dom) return;
+  const wrap=document.createElement('div');
+  wrap.innerHTML=mapCardHTML(n,mapCardState.full);
+  dom.innerHTML='';
+  dom.appendChild(wrap.firstChild);
+  const cl=dom.querySelector('.mc-close'); if(cl) cl.addEventListener('click',()=>hideMapCard());
+  setCardClass(mapCardState,mapCardState.full);
+}
+function pollinationsUrl(prompt,seed){
+  const p=encodeURIComponent(String(prompt||'').slice(0,900));
+  return 'https://image.pollinations.ai/prompt/'+p+'?width=640&height=400&nologo=true&seed='+(seed||0);
+}
+function cardImgPrompt(n){
+  const bits=[n.data('title')||'',n.data('loc')||'',String(n.data('desc')||'').slice(0,160)].filter(Boolean).join(', ');
+  return 'editorial travel photograph, '+bits+', natural lighting, realistic, no text, no watermark';
+}
+async function aiCardPrompt(n){
+  const stored=(localStorage.getItem('mv_ai_key')||'').trim();
+  const el=document.getElementById('aiKey');
+  const key=stored||(el&&el.value?String(el.value).trim():'');
+  if(!key) return null;
+  try{
+    const sys='Você gera PROMPTS de imagem (em inglês) para ilustrar itens de um mapa de planejamento de mobilidade internacional. Responda SOMENTE JSON: {"prompt":"..."}. O prompt descreve uma cena/foto editorial realista e específica (lugar, contexto, clima), sem texto, sem marca d\'água, sem pessoas famosas, sem violência.';
+    const info='Título: '+(n.data('title')||'')+'\nLocal: '+(n.data('loc')||'')+'\nTipo: '+nodeTypeLabel(n)+'\nDescrição: '+String(n.data('desc')||'').slice(0,300);
+    const data=await aiChat([{role:'user',content:info}],sys);
+    if(!data) return null;
+    let p=data; try{ const j=JSON.parse(data); if(j&&j.prompt) p=j.prompt; }catch(e){}
+    p=String(p).trim();
+    return p?p.slice(0,400):null;
+  }catch(e){ return null; }
+}
+function imgLoads(url,ms){
+  return new Promise(res=>{
+    const im=new Image(); let done=false;
+    const t=setTimeout(()=>{ if(!done){done=true; res(false);} }, ms||20000);
+    im.onload=()=>{ if(!done){done=true; clearTimeout(t); res(true);} };
+    im.onerror=()=>{ if(!done){done=true; clearTimeout(t); res(false);} };
+    im.src=url;
+  });
+}
+async function mcWikiImg(n){
+  const base=((n.data('title')||'').trim()||(n.data('loc')||'').trim());
+  if(!base) return null;
+  try{
+    const term=base.replace(/[🔗📌📍🏨💼🏢🏠🎒]*/g,'').split(' ').slice(0,4).join(' ').trim();
+    const r=await fetch('https://pt.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages&piprop=thumbnail&pithumbsize=420&redirects=1&titles='+encodeURIComponent(term));
+    const j=await r.json();
+    const pages=j&&j.query&&j.query.pages? Object.values(j.query.pages):[];
+    const th=pages[0]&&pages[0].thumbnail&&pages[0].thumbnail.source;
+    return th||null;
+  }catch(e){ return null; }
+}
+async function mcGenImg(nodeId){
+  const n=cy.getElementById(nodeId); if(!n.length||!mapObj) return;
+  mcSetBusy(nodeId,true);
+  try{
+    let prompt=await aiCardPrompt(n);
+    if(!prompt) prompt=cardImgPrompt(n);
+    const seed=Math.floor(Math.random()*1e9);
+    const url=pollinationsUrl(prompt,seed);
+    const ok=await imgLoads(url,20000);
+    if(ok){ n.data('img',null); n.data('imgAuto',url); toast('Imagem gerada pela IA ✓','ok'); }
+    else{
+      const w=await mcWikiImg(n);
+      if(w){ n.data('img',null); n.data('imgAuto',w); toast('IA indisponível — usei imagem da Wikipedia ✓','ok'); }
+      else{ toast('Não consegui gerar imagem agora (IA/gerador offline)','err'); }
+    }
+  } finally {
+    mcSetBusy(nodeId,false); mcRefreshCard(nodeId); if(mapObj) syncMap(); sync3D();
+  }
+}
+function mcUploadImg(nodeId){
+  const n=cy.getElementById(nodeId); if(!n.length) return;
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=()=>{
+    const f=inp.files&&inp.files[0]; if(!f) return;
+    readImgAsDataURL(f,(err,data,kb)=>{
+      if(err){ toast(err.message,'err'); return; }
+      n.data('img',data); n.data('imgAuto',null);
+      mcRefreshCard(nodeId); if(mapObj) syncMap(); sync3D();
+      toast('Imagem aplicada ('+kb+' KB) ✓','ok');
+    });
+  };
+  inp.click();
+}
+function mcDelImg(nodeId){
+  const n=cy.getElementById(nodeId); if(!n.length) return;
+  n.data('img',null); n.data('imgAuto',null);
+  mcRefreshCard(nodeId); if(mapObj) syncMap(); sync3D();
+  toast('Imagem removida ✓','ok');
 }
 function mcOpen(id){ const c=cy.getElementById(id); if(c.length){ select(c); hideMapCard(); setTab('etapas'); openRadialMenu(c,null); } }
 function mcEditP(id){ const c=cy.getElementById(id); if(c.length){ select(c); hideMapCard(); setTab('etapas'); const tf=document.getElementById('edName'); if(tf) tf.focus(); } }
@@ -2752,15 +2956,18 @@ function mmClampLateral(){
   if(!mapObj) return;
   try{
     const b=mapObj.getBounds();
-    const span=b.getEast()-b.getWest();
     const c=mapObj.getCenter();
-    if(span>=359.9){
-      if(Math.abs(c.lng)>0.001){ mapObj.jumpTo({center:[0,c.lat],animate:false}); }
-      return;
+    let lng=c.lng, lat=c.lat;
+    // lateral (leste/oeste): não mostrar o vazio além de ±180
+    const span=b.getEast()-b.getWest();
+    if(span>=359.9){ lng=0; }
+    else { const half=span/2; lng=Math.max(-180+half, Math.min(180-half, c.lng)); }
+    // vertical (norte/sul): Ártico/Antártico não podem dominar a tela
+    const LAT_MIN=-55, LAT_MAX=72;
+    lat=Math.max(LAT_MIN, Math.min(LAT_MAX, c.lat));
+    if(Math.abs(lng-c.lng)>0.0001 || Math.abs(lat-c.lat)>0.0001){
+      mapObj.jumpTo({center:[lng,lat],animate:false});
     }
-    const half=span/2;
-    const cl=Math.max(-180+half, Math.min(180-half, c.lng));
-    if(Math.abs(cl-c.lng)>0.0001){ mapObj.jumpTo({center:[cl,c.lat],animate:false}); }
   }catch(e){}
 }
 function shortT(n){
@@ -2795,7 +3002,7 @@ function syncMap(){
   const cur=mapCardState&&mapCardState.nodeId;
   const onlyActive=document.getElementById('mapOnlyActive')&&document.getElementById('mapOnlyActive').checked;
   const keep={};
-  const nodes=cy.nodes().filter(n=>n.data('loc')&&nodeVisibleOnMap(n));
+  const nodes=cy.nodes().filter(n=>(n.data('loc')||n.data('latll'))&&nodeVisibleOnMap(n));
   nodes.forEach(n=>{
     if(onlyActive && n.data('status')!=='ativo') return;
     if(chipFilter && n.data('status')!==chipFilter) return;
@@ -2980,6 +3187,7 @@ function createMapItemAt(lat,lng){
   const cat=(document.getElementById('mioCat')||{}).value||'info';
   const ptype=(document.getElementById('mioPtype')||{}).value||'outro';
   if(!title||!String(title).trim()){ toast('Dê um nome ao item','err'); return; }
+  if(!validLL([lat,lng])){ toast('Local inválido (fora da escala do mapa)','err'); return; }
   const id='n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
   cy.add({data:{id,title:String(title).trim(),cat,status:'planejado',desc:'',phase:null,loc:String(title).trim(),latll:[lat,lng],ptype,evitar:false,img:null}});
   removePickMarker();
@@ -4113,15 +4321,12 @@ function buildSyncModal(){
        '</div>';
   }else{
     h+='<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.title')+'</h3>'+
-       '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 16px">'+T('sync.subtitle')+'</p>';
-    if(cid){
-      h+='<div id="gsiBtnLogin" class="gsi-btn-wrap"></div>';
-    }
-    h+='<div class="auth-divider">ou</div>'+
+       '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 16px">'+T('sync.subtitle')+'</p>'+
        '<div class="auth-field"><label>'+T('sync.email')+'</label><input id="syncEmail" type="email" placeholder="seu@email.com"></div>'+
        '<div class="auth-field"><label>'+T('sync.password')+'</label><input id="syncPass" type="password" onkeydown="if(event.key===\'Enter\')apiLoginUI()"></div>'+
        '<div id="syncErrMsg" style="display:none;color:#e03131;margin:6px 0;font-size:12.5px"></div>'+
        '<button class="auth-submit" onclick="apiLoginUI()">'+T('sync.loginBtn')+'</button>'+
+       (cid?('<div class="auth-divider">ou</div><div id="gsiBtnLogin" class="gsi-btn-wrap"></div>'):'')+
        '<a class="auth-link" onclick="toggleSyncModal();buildRegisterModal()">'+T('sync.signupBtn')+'</a>'+
        '<a class="auth-link" onclick="buildForgotModal()" style="margin-top:2px">'+T('sync.forgotBtn')+'</a>';
   }
@@ -4134,15 +4339,15 @@ function buildRegisterModal(){
   const box=authBox(); if(!box) return;
   const cid=syncGoogleClientId();
   const _GOOGLE_SVG='<svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>';
-  let h=(!gateLocked)?'<button class="modal-close" onclick="authClose()" title="Voltar">&times;</button>':''+
+  let h=((!gateLocked)?'<button class="modal-close" onclick="authClose()" title="Voltar">&times;</button>':'')+
      '<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.registerTitle')+'</h3>'+
      '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 16px">'+T('sync.registerSubtitle')+'</p>'+
-     (cid?('<div id="gsiBtnReg" class="gsi-btn-wrap"></div><div class="auth-divider">ou</div>'):'')+
      '<div class="auth-field"><label>'+T('sync.name')+'</label><input id="regName" type="text" placeholder="Seu nome"></div>'+
      '<div class="auth-field"><label>'+T('sync.email')+'</label><input id="regEmail" type="email" placeholder="seu@email.com"></div>'+
      '<div class="auth-field"><label>'+T('sync.password')+'</label><input id="regPass" type="password" placeholder="Mín. 8 caracteres" onkeydown="if(event.key===\'Enter\')apiRegisterUI()"></div>'+
      '<div id="syncErrMsg" style="display:none;color:#e03131;margin:6px 0;font-size:12.5px"></div>'+
      '<button class="auth-submit" onclick="apiRegisterUI()">'+T('sync.signupBtn')+'</button>'+
+     (cid?('<div class="auth-divider">ou</div><div id="gsiBtnReg" class="gsi-btn-wrap"></div>'):'')+
      '<a class="auth-link" onclick="buildSyncModal()">Já tem conta? Entrar</a>';
   box.innerHTML=h;
   if(!gateLocked) document.getElementById('modal').classList.add('open');
@@ -4178,7 +4383,7 @@ async function apiLogoutUI(){
 }
 function buildForgotModal(){
   const box=authBox(); if(!box) return;
-  let h=(!gateLocked)?'<button class="modal-close" onclick="authClose()" title="Voltar">&times;</button>':''+
+  let h=((!gateLocked)?'<button class="modal-close" onclick="authClose()" title="Voltar">&times;</button>':'')+
      '<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.forgotTitle')+'</h3>'+
      '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 16px">'+T('sync.forgotSubtitle')+'</p>'+
      '<div class="auth-field"><label>'+T('sync.email')+'</label><input id="syncEmail" type="email" placeholder="seu@email.com" onkeydown="if(event.key===\'Enter\')apiForgotPassword()"></div>'+
@@ -4202,7 +4407,7 @@ async function apiForgotPassword(){
     let msg=(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')&&data.dev_token
       ? T('sync.forgotSuccess')+'<br><code style="font-size:11px;word-break:break-all">DEV token: '+esc(data.dev_token)+'</code>'
       : T('sync.forgotSuccess');
-    box.innerHTML=(!gateLocked)?'<button class="modal-close" onclick="authClose()" title="'+T('sync.closed')+'">&times;</button>':''+
+    box.innerHTML=((!gateLocked)?'<button class="modal-close" onclick="authClose()" title="'+T('sync.closed')+'">&times;</button>':'')+
       '<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.forgotTitle')+'</h3>'+
       '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:12px 0">'+msg+'</p>'+
       '<button class="auth-submit" onclick="buildResetModal()">'+T('sync.forgotHasToken')+'</button>'+
@@ -4212,7 +4417,7 @@ async function apiForgotPassword(){
 }
 function buildResetModal(){
   const box=authBox(); if(!box) return;
-  let h=(!gateLocked)?'<button class="modal-close" onclick="buildForgotModal()" title="Voltar">&times;</button>':''+
+  let h=((!gateLocked)?'<button class="modal-close" onclick="buildForgotModal()" title="Voltar">&times;</button>':'')+
      '<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.resetTitle')+'</h3>'+
      '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 16px">'+T('sync.resetSubtitle')+'</p>'+
      '<div class="auth-field"><label>'+T('sync.email')+'</label><input id="resetEmail" type="email" placeholder="seu@email.com"></div>'+
@@ -4234,7 +4439,7 @@ async function apiResetPassword(){
   try{
     const data=await apiFetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,token,password})});
     const box=authBox();
-    box.innerHTML=(!gateLocked)?'<button class="modal-close" onclick="authClose()" title="'+T('sync.closed')+'">&times;</button>':''+
+    box.innerHTML=((!gateLocked)?'<button class="modal-close" onclick="authClose()" title="'+T('sync.closed')+'">&times;</button>':'')+
       '<h3 style="text-align:center;margin:8px 0 4px">'+T('sync.resetTitle')+'</h3>'+
       '<p style="text-align:center;color:var(--muted);font-size:12.5px;margin:12px 0">'+(data.status!==false?'Senha redefinida ✓ — faça login com a nova senha.':'Falha: '+data.detail)+'</p>'+
       '<button class="auth-submit" onclick="buildSyncModal()">'+T('sync.loginBtn')+'</button>';
@@ -4330,7 +4535,7 @@ function doAddEdge(){
   cy.add({data:{id:'e'+Date.now(),source:from,target:to,cond}});
   applyStatusToStyles(); propagate(); sync3D(); closeModal(); toast('Dependência criada ✓','ok');
 }
-function deleteNode(){ if(selected){ selected.remove(); selected=null; select(null); sync3D(); updatePill(); toast('Etapa removida'); } }
+function deleteNode(){ if(selected){ selected.remove(); selected=null; select(null); sync3D(); if(mapObj) syncMap(); updatePill(); toast('Etapa removida'); } }
 function resetDemo(){
   GLOBAL=normalizeGraph(seedGraph());
   pathArr=[];
@@ -4608,7 +4813,7 @@ function applyHistory(){
   cbs.forEach(cb=>{
     const h=histBuffer[+cb.value]; if(!h) return;
     const id='hist_'+Date.now()+'_'+added;
-    const loc=resolveHistoryLoc(h.local);
+    const loc=resolveHistoryLoc(h.local)||(String(h.local||'').trim()||null);
     const ptype=HIST_PTYPE[h.tipo]||'outro';
     const when=(h.quando?'Quando: '+h.quando+(h.desc?' — ':''):'')+h.desc;
     const pesso=(h.pessoas&&h.pessoas.length?'Pessoas: '+h.pessoas.join(', '):'');
@@ -4631,7 +4836,7 @@ function applyHistory(){
     added++;
   });
   if(added){
-    applyStatusToStyles(); propagate(); runLayout(); sync3D(); updatePill(); ifMapOpen(()=>syncMap());
+    applyStatusToStyles(); propagate(); runLayout(); sync3D(); updatePill(); ifMapOpen(()=>syncMap()); geocodeMissingLocs();
     document.getElementById('historyBox').innerHTML='<div class="hint" style="color:var(--green)">✓ '+added+' '+(added===1?'histórico':'históricos')+' marcados como '+T('status.concluido')+'. Veja no globo/mapa (pin 🏠/💼/🎒) e no painel da etapa.</div>';
     toast(T('toast.hdone'),'ok');
   }
@@ -4655,14 +4860,17 @@ const IMPACT_NIVEL={alto:'it.impactoAlto',medio:'it.impactoMedio',baixo:'it.impa
 function itemDescHTML(it,i,short){
   const icon=ITEM_ICON[it.tipo]||'ℹ️';
   const aval=AVAL_STYLE[it.avaliacao]||AVAL_STYLE.neutro;
-  return `<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 4px;border-bottom:1px dashed var(--line);cursor:pointer;border-left:3px solid ${aval.c}">
-    <input type="checkbox" class="icb" value="${i}" checked style="margin-top:2px">
+  const falta=!!it.obrigatorio_faltando;
+  return `<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 4px;border-bottom:1px dashed var(--line);cursor:pointer;border-left:3px solid ${falta?'#ff5d73':aval.c}">
+    <input type="checkbox" class="icb" value="${i}" ${falta?'':'checked'} style="margin-top:2px">
     <span style="flex:1;min-width:0">
       <b>${icon} ${esc(it.nome||('Item '+(i+1)))}</b>
+      ${falta?'<span style="color:#ff5d73;font-weight:600;margin-left:6px;font-size:11.5px">🚫 '+T('items.invalid')+'</span>':''}
       <span style="color:${aval.c};font-weight:600;margin-left:6px;font-size:11.5px">${aval.i} ${T(aval.key)}</span>
       ${it.fato?'<span style="opacity:.65;font-size:10.5px"> · '+T('it.confFact')+'</span>':'<span style="opacity:.65;font-size:10.5px"> · '+T('it.confInference')+'</span>'}
       ${(it.tipo==='pessoa'&&it.importancia)?('<span style="font-size:10.5px;opacity:.7"> · '+esc(it.importancia)+'</span>'):''}
       <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${icon} tipo <b>${esc(it.tipo)}</b>${it.local?(' · 📍 '+esc(it.local)):''}${it.prazo?(' · ⏳ '+esc(it.prazo)):''}</div>
+      ${falta?'<div style="font-size:11px;color:#ff5d73;margin-top:2px">⚠️ '+T('items.invalidHint')+'</div>':''}
       ${it.motivo?('<div style="font-size:11px;color:'+aval.c+';margin-top:2px">💡 '+esc(it.motivo)+'</div>'):''}
       ${it.desc?'<div style="font-size:11.5px;color:var(--muted)">'+esc(it.desc)+'</div>':''}
       ${valorTxtHTML(it.valor,it.moedas)}
@@ -4712,7 +4920,7 @@ async function runExtractItems(){
   const box=document.getElementById('itemsBox');
   box.innerHTML='<div class="spinner"></div> Extraindo itens inteligentes...';
   const titles=cy.nodes().map(n=>n.data('title')).filter(Boolean);
-  const sys='Você extrai ITENS ESTRUTURADOS de conteúdo informativo (transcrição de vídeo, artigo, texto de planejamento, prompt com dados) para um mapa de planejamento de mobilidade internacional. Cada coisa relevante do texto vira UM ITEM. Tipos: lugar (cidades/países/locais), pessoa (criadores, influenciadores, contatos, agentes — anote CONTATOS: telefone/instagram/email/whatsapp/site, onde está, o que faz, e nivel de importancia: essencial|forte|medio|contato), canal (YouTube + URL do canal), site (URL, tema), empresa|estabelecimento (fábrica/agência/loja — ramo, endereço, contato), emprego (local, salário médio com moeda, condições: visto/horas/benefícios/idioma, itens necessários), curso (nome, local, instituição, valor/moeda, duração, requisitos, link), valor|info (dado útil, ex.: custo de vida, taxa, valor de visto). Para CADA item: (1) AVALIAÇÃO DE IMPACTO raciocinada — avaliacao: recomendado|ressalvas|nao|neutro; impacto: positivo|negativo|neutro; impacto_nivel: alto|medio|baixo; motivo (1-2 linhas explicando o impacto no plano do usuário); fato: true se esse dado foi DITO na fonte, false se é INFERÊNCIA sua (nunca apresente inferência como fato). (2) VALOR monetário quando houver: valor:{quantia, moeda (JPY/BRl/USD/EUR...), unidade ("/mês","total"...)}; moedas: lista das moedas a exibir (ex.: ["BRL","USD"]). (3) PRAZO/janela temporal estimada quando houver (ex.: "3 meses antes", "dezembro"). (4) REQUISITOS para o item fazer sentido na vida do usuário: requisitos:[{nome, tipo: visto|passagem|recurso_minimo|curso|documento|idioma|contato|outro, custo:{quantia,moeda} se estimável, prazo, desc (onde/como resolver: portal oficial, agência, custo médio), resolve (nome de OUTRO item/lugar/empresa deste texto que RESOLVE o requisito — ex.: agência que tira visto) }]. (5) local (país/cidade). Sempre que o item estiver ligado a outros, devolva relacoes:[{de, para, tipo (menciona|afeta|requer|contrata|fica em|resolve)}] — use "afeta" para ligar a ETAPAS JÁ EXISTENTES do grafo por título. Devolva SOMENTE JSON válido: {fonte:{nome,url,canal}, itens:[...], relacoes:[...]}. pt-BR.';
+  const sys='Você extrai ITENS ESTRUTURADOS de conteúdo informativo (transcrição de vídeo, artigo, texto de planejamento, prompt com dados) para um mapa de planejamento de mobilidade internacional. Cada coisa relevante do texto vira UM ITEM. Tipos: lugar (cidades/países/locais), pessoa (criadores, influenciadores, contatos, agentes — anote CONTATOS: telefone/instagram/email/whatsapp/site, onde está, o que faz, e nivel de importancia: essencial|forte|medio|contato), canal (YouTube + URL do canal), site (URL, tema), empresa|estabelecimento (fábrica/agência/loja — ramo, endereço, contato), emprego (local, salário médio com moeda, condições: visto/horas/benefícios/idioma, itens necessários), curso (nome, local, instituição, valor/moeda, duração, requisitos, link), valor|info (dado útil, ex.: custo de vida, taxa, valor de visto). Para CADA item: (1) AVALIAÇÃO DE IMPACTO raciocinada — avaliacao: recomendado|ressalvas|nao|neutro; impacto: positivo|negativo|neutro; impacto_nivel: alto|medio|baixo; motivo (1-2 linhas explicando o impacto no plano do usuário); fato: true se esse dado foi DITO na fonte, false se é INFERÊNCIA sua (nunca apresente inferência como fato). (2) VALOR monetário quando houver: valor:{quantia, moeda (JPY/BRl/USD/EUR...), unidade ("/mês","total"...)}; moedas: lista das moedas a exibir (ex.: ["BRL","USD"]). (3) PRAZO/janela temporal estimada quando houver (ex.: "3 meses antes", "dezembro"). (4) REQUISITOS para o item fazer sentido na vida do usuário: requisitos:[{nome, tipo: visto|passagem|recurso_minimo|curso|documento|idioma|contato|outro, custo:{quantia,moeda} se estimável, prazo, desc (onde/como resolver: portal oficial, agência, custo médio), resolve (nome de OUTRO item/lugar/empresa deste texto que RESOLVE o requisito — ex.: agência que tira visto) }]. (5) LOCAL — OBRIGATÓRIO E PRIMÁRIO: todo item PRECISA de um local real e utilizável (país e/ou cidade/endereço) que faça sentido num plano de rotas pelo mundo — é ele que define onde o pin será marcado no mapa. Se o texto não trouxer um local real, NÃO invente e NUNCA use (0,0): retorne local:"" e obrigatorio_faltando:true. (5b) CAMPOS OBRIGATÓRIOS POR TIPO (se faltar qualquer um → obrigatorio_faltando:true): emprego → local + salário/base (valor) + requisitos + benefícios; curso → nome + local/instituição + requisitos (+ valor); lugar → nome + local real; empresa|estabelecimento → nome + endereço/local; pessoa|contato → nome + onde está; canal|site → nome + URL. Os demais campos são secundários. Sempre que o item estiver ligado a outros, devolva relacoes:[{de, para, tipo (menciona|afeta|requer|contrata|fica em|resolve)}] — use "afeta" para ligar a ETAPAS JÁ EXISTENTES do grafo por título. Devolva SOMENTE JSON válido: {fonte:{nome,url,canal}, itens:[...], relacoes:[...]}. pt-BR.';
   const data=await aiChat([{role:'user',content:'ETAPAS JÁ EXISTENTES NO MEU GRAFO (títulos p/ relacoes "afeta"):\n'+(titles.join(' · ')||'(nenhuma)')+'\n\nFONTE (nome/url): '+srcName+' | '+srcUrl+'\n\nCONTEÚDO:\n'+text+'\n\nDevolva SOMENTE JSON válido conforme o schema.'}],sys);
   box.innerHTML='';
   if(data===null) return;
@@ -4723,6 +4931,7 @@ async function runExtractItems(){
     impacto:it.impacto||'neutro', impacto_nivel:it.impacto_nivel||it.nivel||'medio', motivo:it.motivo||'',
     fato:it.fato===true, contatos:it.contatos||{}, valor:it.valor||null, moedas:Array.isArray(it.moedas)?it.moedas:[],
     prazo:it.prazo||'', importancia:it.importancia||'', requisitos:Array.isArray(it.requisitos)?it.requisitos:[],
+    beneficios:it.beneficios||'', obrigatorio_faltando:(it.obrigatorio_faltando===true||!String(it.local||'').trim()),
     url:it.url||'', resolve:it.resolve||'', origem:{nome:srcName,url:srcUrl,canal:it.canal||srcName}
   }));
   if(!its.length){ box.innerHTML='<div class="hint">'+T('history.empty')+'</div>'; return; }
@@ -4789,7 +4998,7 @@ function applyItens(){
   idxs.forEach((idx,o)=>{
     const it=itensBuffer[idx]; if(!it) return;
     const id='it_'+Date.now()+'_'+o+( added%97 );
-    const loc=resolveHistoryLoc(it.local);
+    const loc=resolveHistoryLoc(it.local)||(String(it.local||'').trim()||null);
     const ptype=ITEM_PTYPE[it.tipo]||'outro';
     const meta={tipoItem:it.tipo,contatos:it.contatos||{},valor:it.valor||null,moedas:(it.moedas||[]).slice(),
       requisitos:(it.requisitos||[]).map(r=>({nome:r.nome||r.tipo,tipo:r.tipo||'outro',custo:r.custo||null,prazo:r.prazo||'',desc:r.desc||'',resolve:r.resolve||''})),
@@ -4839,7 +5048,7 @@ function applyItens(){
     });
   }
   if(added){
-    applyStatusToStyles(); propagate(); runLayout(); sync3D(); updatePill(); buildLocList(); ifMapOpen(()=>syncMap());
+    applyStatusToStyles(); propagate(); runLayout(); sync3D(); updatePill(); buildLocList(); ifMapOpen(()=>syncMap()); geocodeMissingLocs();
     document.getElementById('itemsBox').innerHTML='<div class="hint" style="color:var(--green)">✓ '+added+' '+(added===1?'item':'itens')+' inserido'+(added>1?'s':'')+' · '+addedReq+' nós de requisito · '+addedRel+' relações. Veja no grafo/globo (📺 fonte + itens) e no painel do nó.</div>';
     toast(T('toast.itemsdone'),'ok');
     const fn=itensBuffer[idxs[0]]&&itensBuffer[idxs[0]].origem;
@@ -4953,37 +5162,12 @@ function moveTip(rpos){
 function hideTip(){ document.getElementById('cyTooltip').style.display='none'; }
 
 /* =========================================================
-   EFEITO XYZ / PROFUNDIDADE (2.5D parallax) + GIRAR ⟳
+   GIRAR O MAPA ⟳ (rotação automática)
    ========================================================= */
 function renderScene(){
   const main=document.getElementById('main');
-  if(!tiltOn && !spinOn){ main.style.transform=''; return; }
-  const rx = tiltOn ? -lastDY*6 : -6;                       // inclina 3D também quando só gira
-  const ry = (spinOn? spinAngle:0) + (tiltOn? lastDX*8 : 0);
-  main.style.transform='perspective(1400px) rotateX('+rx+'deg) rotateY('+ry+'deg)';
-}
-function applyTilt(evt){
-  const main=document.getElementById('main');
-  const rect=main.getBoundingClientRect();
-  if(evt){
-    lastDX=(evt.clientX-rect.left)/rect.width-0.5;
-    lastDY=(evt.clientY-rect.top)/rect.height-0.5;
-  }
-  renderScene();
-}
-function updateSceneLabel(){
-  const label=document.getElementById('zLabel');
-  if(tiltOn && spinOn)      label.textContent=T('scene.z4');
-  else if(spinOn)           label.textContent=T('scene.z3');
-  else if(tiltOn)           label.textContent=T('scene.z2');
-  else                      label.textContent=T('scene.z1');
-}
-function toggleTilt(){
-  tiltOn=!tiltOn;
-  document.getElementById('tiltBtn').classList.toggle('on',tiltOn);
-  updateSceneLabel();
-  updatePill();
-  applyTilt(null);
+  if(!spinOn){ main.style.transform=''; return; }
+  main.style.transform='perspective(1400px) rotateX(-6deg) rotateY('+spinAngle+'deg)';
 }
 function toggleSpin(){
   const btn=document.getElementById('spinBtn');
@@ -4998,15 +5182,13 @@ function toggleSpin(){
     spinRaf=requestAnimationFrame(spinLoop);
     toast('Girando o mapa ⟳');
   }
-  updateSceneLabel();
-  applyTilt(null);
+  renderScene();
 }
 function spinLoop(){
   spinAngle=(spinAngle+0.25)%360;                 // ~15°/s
-  applyTilt(null);
+  renderScene();
   spinRaf=requestAnimationFrame(spinLoop);
 }
-document.addEventListener('mousemove',e=>applyTilt(e));
 
 /* ---------- UTILITÁRIOS ---------- */
 function toast(msg,type){
@@ -5189,7 +5371,6 @@ function setTab(name){
   document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id==='tab-'+name));
 }
 document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>setTab(t.dataset.tab); });
-document.getElementById('tiltBtn').addEventListener('click',toggleTilt);
 document.getElementById('spinBtn').addEventListener('click',toggleSpin);
 
 /* IA: autosave ao digitar + modelo padrão por provider */

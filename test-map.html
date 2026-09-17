@@ -145,10 +145,12 @@
     });
 
     run('desktop: pointerenter abre card compacto', function(){
+      ev("window.__origMM2=window.matchMedia; window.matchMedia=function(q){ if(String(q)==='(hover: none)') return {matches:false,media:q,onchange:null,addListener:function(){},removeListener:function(){},addEventListener:function(){},removeEventListener:function(){}}; return window.__origMM2(q); };");
       ev("hideMapCard()");
       ev("(function(){ var p=document.querySelector('#mapPins .mm-pin[data-id=\\'canada\\']'); p.dispatchEvent(new MouseEvent('pointerenter',{bubbles:true})); })()");
       var ok=ev("!!mapCardState&&!mapCardState.full&&mapCardState.nodeId==='canada'");
       ev("hideMapCard()");
+      ev("window.matchMedia=window.__origMM2; delete window.__origMM2;");
       return ok;
     });
 
