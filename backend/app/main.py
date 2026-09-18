@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 
 from . import config
 from .db import init_db
-from .routers import auth, docs
+from .routers import auth, docs, settings
 
 logging.basicConfig(level=logging.INFO)
 
@@ -29,6 +29,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(docs.router)
+app.include_router(settings.router)
 
 
 @app.on_event("startup")

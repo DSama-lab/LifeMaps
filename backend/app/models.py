@@ -24,6 +24,15 @@ class User(Base):
     documents: Mapped[list["Document"]] = relationship(back_populates="owner")
 
 
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    data: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+
+
 class Document(Base):
     __tablename__ = "docs"
 

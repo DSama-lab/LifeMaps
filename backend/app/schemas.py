@@ -33,6 +33,18 @@ class UpdateMeIn(BaseModel):
     name: str = ""
 
 
+class SettingsIn(BaseModel):
+    provider: Optional[str] = None
+    model: Optional[str] = None
+    ai_key: Optional[str] = None
+
+
+class SettingsOut(BaseModel):
+    provider: str = ""
+    model: str = ""
+    ai_key: str = ""
+
+
 class UserOut(BaseModel):
     id: int
     email: str
