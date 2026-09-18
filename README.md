@@ -44,7 +44,7 @@ The application opens in Map mode when the graph contains geolocated nodes. The 
 |---|---|---|
 | Conditional engine | `node test-motor.js` | 13/13 |
 | 3D / globe | `http://127.0.0.1:8794/test-3d.html` | 15/15 |
-| Premium map | `http://127.0.0.1:8794/test-map.html` | 18/18 |
+| Premium map | `http://127.0.0.1:8794/test-map.html` | 21/21 |
 
 `test-map.html` cache-busts the application iframe automatically (`app.src='index.html?cv='+Date.now()`), so no stale copy of `index.html` is served. The harness overrides `matchMedia` for both the touch and desktop scenarios, so its result is identical on desktop and mobile-emulated browsers.
 
@@ -59,6 +59,10 @@ The map repaints the existing vector layers with a Google-style palette (water `
 **Google-style palette — water #81d1e9 / land #f2efe9** (`FaseE-paleta-google.png`)
 
 ![LifeMaps - Google palette](FaseE-paleta-google.png)
+
+**Pin avatar + online image picker (Wikimedia)** (`FaseG-avatar-prod.png`)
+
+![LifeMaps - pin avatar + online image picker](FaseG-avatar-prod.png)
 
 **3D globe** (`test-3d-globo.png`)
 

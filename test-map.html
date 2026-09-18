@@ -184,6 +184,51 @@
              ev("!(function(){ var node=cy.nodes().filter(function(n){return n.data('title')==='Teste Harness Mapa';}); return node.length; })()");
     });
 
+    run('pin com imagem vira avatar redondo (.mm-av) com backgroundImage (zoom base)', function(){
+      var r=ev(`(function(){
+        mapObj.setZoom(2);
+        var idx=cy.getElementById('canada').id();
+        var n=cy.getElementById('canada');
+        n.data('img',null); n.data('imgAuto','data:image/png;base64,iVBORw0KGgo=');
+        syncMap(); sync3D();
+        var p=document.querySelector('#mapPins .mm-pin[data-id="'+idx+'"]');
+        var hasAv=p&&p.classList.contains('mm-av');
+        var isAv=(p.style.backgroundImage||'').indexOf('data:image/png')>=0;
+        var notPhoto=p&&!p.classList.contains('mm-photo');
+        return !!(hasAv&&isAv&&notPhoto);
+      })()`);
+      return r===true;
+    });
+
+    run('sem imagem o pin volta ao padrão neutro (ícone)', function(){
+      var r=ev(`(function(){
+        var n=cy.getElementById('canada');
+        n.data('img',null); n.data('imgAuto',null); syncMap(); sync3D();
+        var p=document.querySelector('#mapPins .mm-pin[data-id="canada"]');
+        return !!(p&&!p.classList.contains('mm-av')&&!p.classList.contains('mm-photo')&&(p.textContent||'').length>0);
+      })()`);
+      return r===true;
+    });
+
+    run('seletor online abre janela de busca e aplica imagem ao clicar (offline-determinístico)', function(){
+      var r=ev(`(function(){
+        window.__gof=window.fetch; window.fetch=function(){ return Promise.reject(new Error('offline')); };
+        onlineImgPick(cy.getElementById('canada'));
+        var openOK=document.getElementById('modal').classList.contains('open');
+        var grid=!!document.getElementById('webImgGrid');
+        var hasBtn=!!document.getElementById('webImgTerm');
+        var term=document.getElementById('webImgTerm')?document.getElementById('webImgTerm').value:'';
+        webImgData=[{mu:'data:image/png;base64,abco',lu:'https://x',name:'Teste'}];
+        webImgPick(0);
+        var applied=cy.getElementById('canada').data('imgAuto')==='data:image/png;base64,abco';
+        var closed=!document.getElementById('modal').classList.contains('open');
+        cy.getElementById('canada').data('imgAuto',null); syncMap();
+        window.fetch=window.__gof; delete window.__gof;
+        return !!(openOK&&grid&&hasBtn&&(term||'').toLowerCase().indexOf('canad')>=0&&applied&&closed);
+      })()`);
+      return r===true;
+    });
+
     parts.push('');
     out();
   }
