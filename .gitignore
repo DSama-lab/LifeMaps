@@ -9,3 +9,7 @@ mental-maps-3d-faseB.png
 .env.*
 node_modules/
 .opencode/
+
+# Snapshot acidental do Google Maps (junk local) — nunca versionar
+Arm*.html
+"Arm*.html"
